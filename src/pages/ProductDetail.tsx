@@ -1,94 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Star, Heart, Share2, ShoppingCart, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Product } from '../services/api';
+import { LocalStorageService } from '../services/localStorage';
+import { LoadingSpinner } from '../components/shared';
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - will be replaced with API calls
-  const product = {
-    id: '1',
-    name: 'Smartphone Android Flagship Premium',
-    slug: 'smartphone-android-flagship-premium',
-    description: 'Smartphone flagship terbaru dengan teknologi canggih, kamera berkualitas tinggi, dan performa yang luar biasa. Dilengkapi dengan prosesor terdepan dan fitur-fitur inovatif untuk pengalaman pengguna yang maksimal.',
-    price: 8500000,
-    original_price: 9500000,
-    main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20smartphone%20android%20black%20sleek%20design%20flagship%20product%20photography&image_size=square',
-    category: {
-      id: '1',
-      name: 'Elektronik',
-      slug: 'elektronik'
-    },
-    is_featured: true,
-    has_promo: true,
-    specifications: {
-      'Layar': '6.7 inch AMOLED, 120Hz',
-      'Prosesor': 'Snapdragon 8 Gen 3',
-      'RAM': '12GB LPDDR5',
-      'Storage': '256GB UFS 4.0',
-      'Kamera Utama': '200MP + 12MP + 10MP',
-      'Kamera Depan': '32MP',
-      'Baterai': '5000mAh, Fast Charging 65W',
-      'OS': 'Android 14',
-      'Konektivitas': '5G, WiFi 7, Bluetooth 5.3',
-      'Berat': '195 gram'
-    },
-    images: [
-      {
-        id: '1',
-        image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20smartphone%20android%20black%20front%20view%20flagship%20product%20photography&image_size=square',
-        alt_text: 'Tampak depan smartphone'
-      },
-      {
-        id: '2',
-        image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20smartphone%20android%20black%20back%20view%20camera%20flagship%20product%20photography&image_size=square',
-        alt_text: 'Tampak belakang smartphone'
-      },
-      {
-        id: '3',
-        image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20smartphone%20android%20black%20side%20view%20flagship%20product%20photography&image_size=square',
-        alt_text: 'Tampak samping smartphone'
-      },
-      {
-        id: '4',
-        image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20smartphone%20android%20black%20accessories%20box%20flagship%20product%20photography&image_size=square',
-        alt_text: 'Smartphone dengan aksesoris'
-      }
-    ],
-    promo: {
-      id: '1',
-      name: 'Flash Sale Smartphone',
-      discount_percentage: 10,
-      start_date: '2024-01-01',
-      end_date: '2024-12-31'
+  // Update wishlist status when product changes
+  useEffect(() => {
+    if (product) {
+      setIsWishlisted(LocalStorageService.isInWishlist(product._id));
+    }
+  }, [product]);
+
+  const handleWishlistToggle = () => {
+    if (product) {
+      const newWishlistStatus = LocalStorageService.toggleWishlist(product._id);
+      setIsWishlisted(newWishlistStatus);
     }
   };
 
-  const relatedProducts = [
-    {
-      id: '2',
-      name: 'Wireless Earbuds Pro',
-      slug: 'wireless-earbuds-pro',
-      price: 1250000,
-      main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=wireless%20earbuds%20white%20premium%20design%20pro%20version%20product%20photography&image_size=square'
-    },
-    {
-      id: '3',
-      name: 'Smartwatch Fitness Tracker',
-      slug: 'smartwatch-fitness-tracker',
-      price: 2100000,
-      main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=smartwatch%20fitness%20tracker%20black%20sport%20band%20modern%20health%20monitoring%20product%20photography&image_size=square'
-    },
-    {
-      id: '4',
-      name: 'Power Bank 20000mAh',
-      slug: 'power-bank-20000mah',
-      price: 450000,
-      main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=power%20bank%2020000mah%20black%20portable%20fast%20charging%20product%20photography&image_size=square'
+  // Load product data from localStorage
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const products = LocalStorageService.getProducts();
+        const foundProduct = products.find(p => p.slug === slug);
+        
+        if (foundProduct) {
+          setProduct(foundProduct);
+          
+          // Get related products from same category
+          const related = products
+            .filter(p => p._id !== foundProduct._id && p.category._id === foundProduct.category._id)
+            .slice(0, 3);
+          setRelatedProducts(related);
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchProduct();
     }
-  ];
+  }, [slug]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -106,16 +72,54 @@ export default function ProductDetail() {
   };
 
   const nextImage = () => {
+    const imageCount = product.images?.length || 1;
     setSelectedImageIndex((prev) => 
-      prev === product.images.length - 1 ? 0 : prev + 1
+      prev === imageCount - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
+    const imageCount = product.images?.length || 1;
     setSelectedImageIndex((prev) => 
-      prev === 0 ? product.images.length - 1 : prev - 1
+      prev === 0 ? imageCount - 1 : prev - 1
     );
   };
+
+  const getCurrentImage = () => {
+    if (product.images && product.images.length > 0) {
+      return product.images[selectedImageIndex];
+    }
+    return {
+      image_url: product.main_image_url,
+      alt_text: product.name
+    };
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Produk Tidak Ditemukan</h1>
+          <p className="text-gray-600 mb-6">Maaf, produk yang Anda cari tidak tersedia.</p>
+          <Link
+            to="/catalog"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Kembali ke Katalog
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -138,13 +142,13 @@ export default function ProductDetail() {
           {/* Main Image */}
           <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
             <img
-              src={product.images[selectedImageIndex].image_url}
-              alt={product.images[selectedImageIndex].alt_text}
+              src={getCurrentImage().image_url}
+              alt={getCurrentImage().alt_text}
               className="w-full h-full object-cover"
             />
             
             {/* Navigation Arrows */}
-            {product.images.length > 1 && (
+            {product.images && product.images.length > 1 && (
               <>
                 <button
                   onClick={prevImage}
@@ -177,11 +181,11 @@ export default function ProductDetail() {
           </div>
           
           {/* Thumbnail Images */}
-          {product.images.length > 1 && (
+          {product.images && product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
               {product.images.map((image, index) => (
                 <button
-                  key={image.id}
+                  key={image.id || index}
                   onClick={() => setSelectedImageIndex(index)}
                   className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-colors ${
                     selectedImageIndex === index
@@ -248,7 +252,7 @@ export default function ProductDetail() {
               Hubungi Penjual
             </button>
             <button
-              onClick={() => setIsWishlisted(!isWishlisted)}
+              onClick={handleWishlistToggle}
               className={`px-6 py-3 rounded-lg font-medium border transition-colors flex items-center justify-center ${
                 isWishlisted
                   ? 'bg-red-50 border-red-200 text-red-600'

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Trash2, Upload, X } from 'lucide-react';
 import { Product, Category } from '../../services/api';
 import { LoadingSpinner } from '../../components/shared';
+import { LocalStorageService } from '../../services/localStorage';
 
 interface ProductFormProps {
   isEditing?: boolean;
@@ -33,15 +34,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ isEditing = false }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch categories
-        const mockCategories: Category[] = [
-          { _id: '1', name: 'Elektronik', slug: 'elektronik', description: 'Produk elektronik', product_count: 25 },
-          { _id: '2', name: 'Fashion', slug: 'fashion', description: 'Produk fashion', product_count: 18 },
-          { _id: '3', name: 'Olahraga', slug: 'olahraga', description: 'Produk olahraga', product_count: 12 },
-          { _id: '4', name: 'Rumah Tangga', slug: 'rumah-tangga', description: 'Produk rumah tangga', product_count: 15 },
-          { _id: '5', name: 'Kecantikan', slug: 'kecantikan', description: 'Produk kecantikan', product_count: 8 }
-        ];
-        setCategories(mockCategories);
+        // Load categories from localStorage
+        const categories = LocalStorageService.getCategories();
+        setCategories(categories);
 
         // If editing, fetch product data
         if (isEditing && id) {
@@ -155,10 +150,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ isEditing = false }) => {
       newErrors.name = 'Nama produk wajib diisi';
     }
     
-    if (!formData.description?.trim()) {
-      newErrors.description = 'Deskripsi produk wajib diisi';
-    }
-    
     if (!formData.category) {
       newErrors.category = 'Kategori wajib dipilih';
     }
@@ -197,9 +188,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ isEditing = false }) => {
         specifications: specificationsObject
       };
       
-      // Mock API call
-      console.log('Saving product:', productData);
-      console.log('Uploading images:', images);
+      if (isEditing && id) {
+        // Update existing product
+        LocalStorageService.updateProduct(id, productData);
+        console.log('Product updated:', productData);
+      } else {
+        // Create new product
+        const newProduct = LocalStorageService.saveProduct(productData);
+        console.log('Product created:', newProduct);
+      }
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -304,7 +301,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ isEditing = false }) => {
 
               <div className="sm:col-span-6">
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                  Deskripsi*
+                  Deskripsi
                 </label>
                 <div className="mt-1">
                   <textarea

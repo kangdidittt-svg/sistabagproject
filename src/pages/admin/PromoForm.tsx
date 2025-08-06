@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Trash2, Calendar, Tag, Percent } from 'lucide-react';
 import { Promo, Category } from '../../services/api';
 import { LoadingSpinner } from '../../components/shared';
+import { LocalStorageService } from '../../services/localStorage';
 
 interface PromoFormProps {
   isEditing?: boolean;
@@ -33,40 +34,9 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Mock categories data
-        const mockCategories: Category[] = [
-          {
-            _id: '1',
-            name: 'Elektronik',
-            slug: 'elektronik',
-            description: 'Produk elektronik',
-            icon: '',
-            product_count: 25,
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z'
-          },
-          {
-            _id: '2',
-            name: 'Fashion',
-            slug: 'fashion',
-            description: 'Produk fashion',
-            icon: '',
-            product_count: 30,
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z'
-          },
-          {
-            _id: '3',
-            name: 'Makanan & Minuman',
-            slug: 'makanan-minuman',
-            description: 'Produk makanan dan minuman',
-            icon: '',
-            product_count: 15,
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z'
-          }
-        ];
-        setCategories(mockCategories);
+        // Load categories from localStorage
+        const categoriesData = LocalStorageService.getCategories();
+        setCategories(categoriesData);
 
         if (isEditing && id) {
           // Mock promo data for editing
@@ -175,8 +145,15 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
     
     setSaving(true);
     try {
-      // Mock API call
-      console.log('Saving promo:', formData);
+      if (isEditing && id) {
+        // Update existing promo
+        LocalStorageService.updatePromo(id, formData);
+        console.log('Promo updated:', formData);
+      } else {
+        // Create new promo
+        const newPromo = LocalStorageService.savePromo(formData);
+        console.log('Promo created:', newPromo);
+      }
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));

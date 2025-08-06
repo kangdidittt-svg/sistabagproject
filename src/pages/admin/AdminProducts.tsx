@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Product, Category } from '../../services/api';
 import { LoadingSpinner, Pagination, SearchBar, EmptyState } from '../../components/shared';
+import { LocalStorageService } from '../../services/localStorage';
 
 const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -31,72 +32,18 @@ const AdminProducts: React.FC = () => {
   const [sortBy, setSortBy] = useState('created_at_desc');
   const itemsPerPage = 10;
 
-  // Mock data - replace with actual API calls
+  // Load data from localStorage
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Mock categories
-        const mockCategories: Category[] = [
-          { _id: '1', name: 'Elektronik', slug: 'elektronik', description: 'Produk elektronik', product_count: 25 },
-          { _id: '2', name: 'Fashion', slug: 'fashion', description: 'Produk fashion', product_count: 18 },
-          { _id: '3', name: 'Olahraga', slug: 'olahraga', description: 'Produk olahraga', product_count: 12 },
-          { _id: '4', name: 'Rumah Tangga', slug: 'rumah-tangga', description: 'Produk rumah tangga', product_count: 15 },
-          { _id: '5', name: 'Kecantikan', slug: 'kecantikan', description: 'Produk kecantikan', product_count: 8 }
-        ];
-
-        // Mock products
-        const mockProducts: Product[] = [
-          {
-            _id: '1',
-            name: 'Smartphone Samsung Galaxy S23',
-            slug: 'smartphone-samsung-galaxy-s23',
-            description: 'Smartphone flagship dengan kamera canggih',
-            price: 12000000,
-            original_price: 15000000,
-            category: mockCategories[0],
-            is_featured: true,
-            stock: 50,
-            images: [{ _id: '1', url: '', alt_text: 'Samsung Galaxy S23', is_primary: true }],
-            specifications: { 'RAM': '8GB', 'Storage': '256GB', 'Display': '6.1 inch' },
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z'
-          },
-          {
-            _id: '2',
-            name: 'Laptop ASUS ROG Strix',
-            slug: 'laptop-asus-rog-strix',
-            description: 'Laptop gaming dengan performa tinggi',
-            price: 18000000,
-            category: mockCategories[0],
-            is_featured: false,
-            stock: 25,
-            images: [{ _id: '2', url: '', alt_text: 'ASUS ROG Strix', is_primary: true }],
-            specifications: { 'CPU': 'Intel i7', 'RAM': '16GB', 'GPU': 'RTX 3060' },
-            created_at: '2024-01-14T10:00:00Z',
-            updated_at: '2024-01-14T10:00:00Z'
-          },
-          {
-            _id: '3',
-            name: 'Sepatu Nike Air Max',
-            slug: 'sepatu-nike-air-max',
-            description: 'Sepatu olahraga dengan teknologi Air Max',
-            price: 1500000,
-            original_price: 2000000,
-            category: mockCategories[2],
-            is_featured: true,
-            stock: 100,
-            images: [{ _id: '3', url: '', alt_text: 'Nike Air Max', is_primary: true }],
-            specifications: { 'Size': '42', 'Material': 'Synthetic', 'Color': 'Black/White' },
-            created_at: '2024-01-13T10:00:00Z',
-            updated_at: '2024-01-13T10:00:00Z'
-          }
-        ];
-
-        setCategories(mockCategories);
-        setProducts(mockProducts);
-        setTotalItems(mockProducts.length);
-        setTotalPages(Math.ceil(mockProducts.length / itemsPerPage));
+        const categoriesData = LocalStorageService.getCategories();
+        const productsData = LocalStorageService.getProducts();
+        
+        setCategories(categoriesData);
+        setProducts(productsData);
+        setTotalItems(productsData.length);
+        setTotalPages(Math.ceil(productsData.length / itemsPerPage));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -153,7 +100,12 @@ const AdminProducts: React.FC = () => {
   };
 
   const handleToggleFeatured = (productId: string) => {
-    // Implement toggle featured logic
+    const newFeaturedStatus = LocalStorageService.toggleProductFeatured(productId);
+    // Refresh products list to reflect changes
+    const updatedProducts = LocalStorageService.getProducts();
+    setProducts(updatedProducts);
+    setTotalItems(updatedProducts.length);
+    setTotalPages(Math.ceil(updatedProducts.length / itemsPerPage));
   };
 
   const filteredProducts = products.filter(product => {

@@ -1,118 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Star, ShoppingBag, Users, Award, Tag, Clock, Percent } from 'lucide-react';
-import { ProductCard, PromoCard, LoadingSpinner } from '../components/shared';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowRight, Star, ShoppingBag, Users, Award, Tag, Clock, Percent, Grid, List } from 'lucide-react';
+import { ProductCard, PromoCard, LoadingSpinner, SearchBar, FilterPanel, Pagination, EmptyState } from '../components/shared';
 import { Product, Promo, Category } from '../services/api';
+import { LocalStorageService } from '../services/localStorage';
+
+interface PriceRange {
+  min: number;
+  max: number;
+}
+
+interface FilterState {
+  categories: string[];
+  priceRange: PriceRange;
+  sortBy: string;
+}
 
 export default function Home() {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [activePromos, setActivePromos] = useState<Promo[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page') || '1'));
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [activePromos, setActivePromos] = useState<Promo[]>([]);
+  const [filters, setFilters] = useState<FilterState>({
+    categories: searchParams.get('category') ? [searchParams.get('category')!] : [],
+    priceRange: { min: 0, max: 50000000 },
+    sortBy: searchParams.get('sort') || 'name'
+  });
+  const itemsPerPage = 12;
 
+  // Load data from localStorage
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Mock categories
-        const mockCategories: Category[] = [
-          { _id: '1', name: 'Elektronik', slug: 'elektronik', description: 'Produk elektronik', product_count: 25 },
-          { _id: '2', name: 'Fashion', slug: 'fashion', description: 'Produk fashion', product_count: 18 },
-          { _id: '3', name: 'Olahraga', slug: 'olahraga', description: 'Produk olahraga', product_count: 12 }
-        ];
+        // Load categories from localStorage
+        const categoriesData = LocalStorageService.getCategories();
+        
+        // Load products from localStorage
+        const productsData = LocalStorageService.getProducts();
+        
+        // Load active promos from localStorage
+        const allPromos = LocalStorageService.getPromos();
+        const activePromos = allPromos.filter(promo => promo.is_active);
 
-        // Mock featured products with promos
-        const mockFeaturedProducts: Product[] = [
-          {
-            _id: '1',
-            name: 'Smartphone Android Terbaru',
-            slug: 'smartphone-android-terbaru',
-            description: 'Smartphone dengan teknologi terdepan dan kamera canggih',
-            price: 2500000,
-            original_price: 3000000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20smartphone%20android%20sleek%20design%20black%20color%20high%20quality%20product%20photography&image_size=square',
-            category: mockCategories[0],
-            is_featured: true,
-            stock: 50,
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z'
-          },
-          {
-            _id: '2',
-            name: 'Sepatu Olahraga Premium',
-            slug: 'sepatu-olahraga-premium',
-            description: 'Sepatu olahraga dengan teknologi cushioning terbaru',
-            price: 850000,
-            original_price: 1200000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20sports%20shoes%20white%20blue%20modern%20athletic%20design%20product%20photography&image_size=square',
-            category: mockCategories[2],
-            is_featured: true,
-            stock: 100,
-            created_at: '2024-01-13T10:00:00Z',
-            updated_at: '2024-01-13T10:00:00Z'
-          },
-          {
-            _id: '3',
-            name: 'Blender Multifungsi',
-            slug: 'blender-multifungsi',
-            description: 'Blender dengan berbagai fungsi untuk kebutuhan dapur modern',
-            price: 450000,
-            original_price: 600000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20kitchen%20blender%20stainless%20steel%20multifunctional%20appliance%20product%20photography&image_size=square',
-            category: mockCategories[1],
-            is_featured: true,
-            stock: 30,
-            created_at: '2024-01-11T10:00:00Z',
-            updated_at: '2024-01-11T10:00:00Z'
-          },
-          {
-            _id: '4',
-            name: 'Laptop Gaming Performance',
-            slug: 'laptop-gaming-performance',
-            description: 'Laptop gaming dengan performa tinggi untuk gaming dan produktivitas',
-            price: 15000000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=gaming%20laptop%20black%20rgb%20keyboard%20modern%20design%20high%20performance%20product%20photography&image_size=square',
-            category: mockCategories[0],
-            is_featured: true,
-            stock: 25,
-            created_at: '2024-01-14T10:00:00Z',
-            updated_at: '2024-01-14T10:00:00Z'
-          }
-        ];
-
-        // Mock active promos
-        const mockPromos: Promo[] = [
-          {
-            _id: '1',
-            title: 'Flash Sale Elektronik',
-            description: 'Diskon besar-besaran untuk semua produk elektronik hingga 50%',
-            discount_percentage: 30,
-            max_discount: 500000,
-            start_date: '2024-01-15T00:00:00Z',
-            end_date: '2024-01-25T23:59:59Z',
-            applicable_categories: [mockCategories[0]],
-            is_active: true,
-            image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=electronics%20flash%20sale%20banner%20modern%20design%20blue%20gradient%20shopping%20promotion&image_size=landscape_16_9',
-            created_at: '2024-01-10T10:00:00Z',
-            updated_at: '2024-01-10T10:00:00Z'
-          },
-          {
-            _id: '2',
-            title: 'Fashion Week Special',
-            description: 'Koleksi fashion terbaru dengan harga spesial',
-            discount_percentage: 25,
-            max_discount: 300000,
-            start_date: '2024-01-20T00:00:00Z',
-            end_date: '2024-01-30T23:59:59Z',
-            applicable_categories: [mockCategories[1]],
-            is_active: true,
-            image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=fashion%20week%20sale%20banner%20elegant%20design%20pink%20purple%20gradient%20clothing%20promotion&image_size=landscape_16_9',
-            created_at: '2024-01-09T10:00:00Z',
-            updated_at: '2024-01-09T10:00:00Z'
-          }
-        ];
-
-        setFeaturedProducts(mockFeaturedProducts);
-        setActivePromos(mockPromos);
+        setCategories(categoriesData);
+        setProducts(productsData);
+        setActivePromos(activePromos);
+        setTotalItems(productsData.length);
+        setTotalPages(Math.ceil(productsData.length / itemsPerPage));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -123,50 +65,81 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // Update URL params when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (filters.categories.length > 0) params.set('category', filters.categories[0]);
+    if (filters.sortBy !== 'name') params.set('sort', filters.sortBy);
+    if (currentPage > 1) params.set('page', currentPage.toString());
+    setSearchParams(params);
+  }, [searchTerm, filters, currentPage, setSearchParams]);
+
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCategory = filters.categories.length === 0 || 
+                           filters.categories.includes(product.category.name);
+    
+    const matchesPrice = product.price >= filters.priceRange.min && 
+                        product.price <= filters.priceRange.max;
+    
+    return matchesSearch && matchesCategory && matchesPrice;
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (filters.sortBy) {
+      case 'price_asc':
+        return a.price - b.price;
+      case 'price_desc':
+        return b.price - a.price;
+      case 'newest':
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      case 'featured':
+        return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+      case 'name':
+      default:
+        return a.name.localeCompare(b.name);
+    }
+  });
+
+  const paginatedProducts = sortedProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when search changes
+  };
+
+  const activeFiltersCount = (
+    filters.categories.length +
+    (filters.priceRange.min > 0 || filters.priceRange.max < 50000000 ? 1 : 0)
+  );
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <LoadingSpinner size="large" text="Memuat halaman..." />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex justify-center items-center h-64">
+          <LoadingSpinner size="large" text="Memuat produk..." />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Temukan Produk
-              <span className="block text-blue-200">Terbaik untuk Anda</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-              Jelajahi ribuan produk berkualitas dengan harga terbaik. 
-              Dari elektronik hingga fashion, semua ada di sini.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/catalog"
-                className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Jelajahi Katalog
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-              <Link
-                to="/promos"
-                className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-600 transition-colors"
-              >
-                Lihat Promo
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
       {/* Active Promos Section */}
       {activePromos.length > 0 && (
-        <section className="py-16 bg-gradient-to-r from-red-50 to-pink-50">
+        <section className="py-16 bg-gradient-to-r from-red-50 to-pink-50 -mx-4 sm:-mx-6 lg:-mx-8 mb-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <div className="flex items-center justify-center mb-4">
@@ -205,142 +178,135 @@ export default function Home() {
         </section>
       )}
 
-      {/* Featured Products Section */}
-      {featuredProducts.length > 0 && (
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center mb-4">
-                <Star className="h-8 w-8 text-yellow-500 mr-3" />
-                <h2 className="text-3xl font-bold text-gray-900">
-                  Produk Unggulan
-                </h2>
-              </div>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Produk pilihan dengan kualitas terbaik dan harga spesial
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map(product => (
-                <ProductCard
-                  key={product._id}
-                  product={product}
-                  showAddToCart
-                  showWishlist
-                  imageSize="medium"
-                />
-              ))}
-            </div>
-            
-            <div className="text-center mt-8">
-              <Link
-                to="/catalog?featured=true"
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Lihat Semua Produk Unggulan
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </div>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Katalog Produk</h1>
+        <p className="text-gray-600">Temukan produk yang Anda butuhkan dari berbagai kategori</p>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search */}
+          <div className="flex-1">
+            <SearchBar
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Cari produk..."
+              showFilters={true}
+              onToggleFilters={() => setShowFilters(!showFilters)}
+              filtersActive={showFilters}
+            />
           </div>
-        </section>
+
+          {/* View Mode */}
+          <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 ${
+                viewMode === 'grid'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-600 hover:bg-gray-50'
+              }`}
+              title="Tampilan Grid"
+            >
+              <Grid className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 ${
+                viewMode === 'list'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-600 hover:bg-gray-50'
+              }`}
+              title="Tampilan List"
+            >
+              <List className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter Panel */}
+      {showFilters && (
+        <div className="mb-8">
+          <FilterPanel
+            isOpen={showFilters}
+            onClose={() => setShowFilters(false)}
+            categories={categories}
+            selectedCategories={filters.categories}
+            onCategoryChange={(categories) => handleFilterChange({ ...filters, categories })}
+            priceRange={filters.priceRange}
+            onPriceRangeChange={(priceRange) => handleFilterChange({ ...filters, priceRange })}
+            sortBy={filters.sortBy}
+            onSortChange={(sortBy) => handleFilterChange({ ...filters, sortBy })}
+            onClearFilters={() => {
+              setFilters({
+                categories: [],
+                priceRange: { min: 0, max: 50000000 },
+                sortBy: 'name'
+              });
+            }}
+          />
+        </div>
       )}
 
-      {/* Features Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Mengapa Memilih E-Katalog?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Kami menyediakan pengalaman berbelanja yang mudah dan menyenangkan
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ShoppingBag className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Produk Berkualitas
-              </h3>
-              <p className="text-gray-600">
-                Semua produk telah melalui kurasi ketat untuk memastikan kualitas terbaik
-              </p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Harga Terbaik
-              </h3>
-              <p className="text-gray-600">
-                Dapatkan harga kompetitif dan promo menarik setiap harinya
-              </p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Layanan Terpercaya
-              </h3>
-              <p className="text-gray-600">
-                Tim customer service yang siap membantu Anda 24/7
-              </p>
-            </div>
-          </div>
+      {/* Results Info */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="text-sm text-gray-600">
+          Menampilkan {paginatedProducts.length} dari {sortedProducts.length} produk
+          {activeFiltersCount > 0 && (
+            <span className="ml-2 text-blue-600">({activeFiltersCount} filter aktif)</span>
+          )}
         </div>
-      </section>
+      </div>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">1000+</div>
-              <div className="text-gray-600">Produk Tersedia</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-green-600 mb-2">50+</div>
-              <div className="text-gray-600">Kategori</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">10K+</div>
-              <div className="text-gray-600">Pelanggan Puas</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-orange-600 mb-2">99%</div>
-              <div className="text-gray-600">Kepuasan</div>
-            </div>
+      {/* Products Grid/List */}
+      {paginatedProducts.length === 0 ? (
+        <EmptyState
+          title="Produk tidak ditemukan"
+          description="Coba ubah kata kunci pencarian atau filter yang Anda gunakan"
+          actionText="Reset Filter"
+          onAction={() => {
+            setSearchTerm('');
+            setFilters({
+              categories: [],
+              priceRange: { min: 0, max: 50000000 },
+              sortBy: 'name'
+            });
+            setCurrentPage(1);
+          }}
+        />
+      ) : (
+        <>
+          <div className={`grid gap-6 mb-8 ${
+            viewMode === 'grid'
+              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+              : 'grid-cols-1'
+          }`}>
+            {paginatedProducts.map(product => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                layout={viewMode}
+                size={viewMode === 'grid' ? 'medium' : 'large'}
+              />
+            ))}
           </div>
-        </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Award className="h-16 w-16 text-yellow-400 mx-auto mb-6" />
-          <h2 className="text-3xl font-bold mb-4">
-            Siap Menemukan Produk Impian Anda?
-          </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan pelanggan yang telah merasakan pengalaman berbelanja terbaik
-          </p>
-          <Link
-            to="/catalog"
-            className="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Mulai Belanja Sekarang
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-        </div>
-      </section>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(sortedProducts.length / itemsPerPage)}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
+        </>
+      )}
+
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Trash2, Upload, X } from 'lucide-react';
 import { Category } from '../../services/api';
 import { LoadingSpinner } from '../../components/shared';
+import { LocalStorageService } from '../../services/localStorage';
 
 interface CategoryFormProps {
   isEditing?: boolean;
@@ -97,10 +98,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ isEditing = false }) => {
       newErrors.name = 'Nama kategori wajib diisi';
     }
     
-    if (!formData.description?.trim()) {
-      newErrors.description = 'Deskripsi kategori wajib diisi';
-    }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -114,9 +111,15 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ isEditing = false }) => {
     
     setSaving(true);
     try {
-      // Mock API call
-      console.log('Saving category:', formData);
-      console.log('Uploading icon:', iconFile);
+      if (isEditing && id) {
+        // Update existing category
+        LocalStorageService.updateCategory(id, formData);
+        console.log('Category updated:', formData);
+      } else {
+        // Create new category
+        const newCategory = LocalStorageService.saveCategory(formData);
+        console.log('Category created:', newCategory);
+      }
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -221,7 +224,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ isEditing = false }) => {
 
               <div className="sm:col-span-6">
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                  Deskripsi*
+                  Deskripsi
                 </label>
                 <div className="mt-1">
                   <textarea

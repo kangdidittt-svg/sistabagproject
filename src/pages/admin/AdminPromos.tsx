@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Promo, Category } from '../../services/api';
 import { LoadingSpinner, Pagination, SearchBar, EmptyState } from '../../components/shared';
+import { LocalStorageService } from '../../services/localStorage';
 
 const AdminPromos: React.FC = () => {
   const [promos, setPromos] = useState<Promo[]>([]);
@@ -30,82 +31,21 @@ const AdminPromos: React.FC = () => {
   const [sortBy, setSortBy] = useState('created_at_desc');
   const itemsPerPage = 10;
 
-  // Mock data - replace with actual API calls
+  // Load data from localStorage
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Mock categories
-        const mockCategories: Category[] = [
-          { _id: '1', name: 'Elektronik', slug: 'elektronik', description: 'Produk elektronik', product_count: 25 },
-          { _id: '2', name: 'Fashion', slug: 'fashion', description: 'Produk fashion', product_count: 18 },
-          { _id: '3', name: 'Olahraga', slug: 'olahraga', description: 'Produk olahraga', product_count: 12 }
-        ];
-
-        // Mock promos
-        const mockPromos: Promo[] = [
-          {
-            _id: '1',
-            title: 'Flash Sale Elektronik',
-            description: 'Diskon besar-besaran untuk semua produk elektronik',
-            discount_percentage: 30,
-            max_discount: 500000,
-            start_date: '2024-01-15T00:00:00Z',
-            end_date: '2024-01-25T23:59:59Z',
-            applicable_categories: [mockCategories[0]],
-            is_active: true,
-            image: '',
-            created_at: '2024-01-10T10:00:00Z',
-            updated_at: '2024-01-10T10:00:00Z'
-          },
-          {
-            _id: '2',
-            title: 'Fashion Week Special',
-            description: 'Koleksi fashion terbaru dengan harga spesial',
-            discount_percentage: 25,
-            max_discount: 300000,
-            start_date: '2024-01-20T00:00:00Z',
-            end_date: '2024-01-30T23:59:59Z',
-            applicable_categories: [mockCategories[1]],
-            is_active: true,
-            image: '',
-            created_at: '2024-01-09T10:00:00Z',
-            updated_at: '2024-01-09T10:00:00Z'
-          },
-          {
-            _id: '3',
-            title: 'Mega Sale Akhir Tahun',
-            description: 'Promo terbesar tahun ini untuk semua kategori',
-            discount_percentage: 50,
-            max_discount: 1000000,
-            start_date: '2023-12-20T00:00:00Z',
-            end_date: '2023-12-31T23:59:59Z',
-            applicable_categories: mockCategories,
-            is_active: false,
-            image: '',
-            created_at: '2023-12-15T10:00:00Z',
-            updated_at: '2023-12-15T10:00:00Z'
-          },
-          {
-            _id: '4',
-            title: 'Promo Olahraga Sehat',
-            description: 'Diskon peralatan olahraga untuk hidup sehat',
-            discount_percentage: 20,
-            max_discount: 200000,
-            start_date: '2024-02-01T00:00:00Z',
-            end_date: '2024-02-15T23:59:59Z',
-            applicable_categories: [mockCategories[2]],
-            is_active: true,
-            image: '',
-            created_at: '2024-01-08T10:00:00Z',
-            updated_at: '2024-01-08T10:00:00Z'
-          }
-        ];
-
-        setCategories(mockCategories);
-        setPromos(mockPromos);
-        setTotalItems(mockPromos.length);
-        setTotalPages(Math.ceil(mockPromos.length / itemsPerPage));
+        // Load categories from localStorage
+        const categoriesData = LocalStorageService.getCategories();
+        setCategories(categoriesData);
+        
+        // Load promos from localStorage
+        const promosData = LocalStorageService.getPromos();
+        setPromos(promosData);
+        
+        setTotalItems(promosData.length);
+        setTotalPages(Math.ceil(promosData.length / itemsPerPage));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {

@@ -10,6 +10,7 @@ import {
   EmptyState 
 } from '../components/shared';
 import { Product, Category } from '../services/api';
+import { LocalStorageService } from '../services/localStorage';
 
 interface PriceRange {
   min: number;
@@ -40,109 +41,21 @@ export default function Catalog() {
   });
   const itemsPerPage = 12;
 
-  // Mock data - will be replaced with API calls
+  // Load data from localStorage
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Mock categories
-        const mockCategories: Category[] = [
-          { _id: '1', name: 'Elektronik', slug: 'elektronik', description: 'Produk elektronik', product_count: 25 },
-          { _id: '2', name: 'Fashion', slug: 'fashion', description: 'Produk fashion', product_count: 18 },
-          { _id: '3', name: 'Rumah Tangga', slug: 'rumah-tangga', description: 'Produk rumah tangga', product_count: 15 },
-          { _id: '4', name: 'Olahraga', slug: 'olahraga', description: 'Produk olahraga', product_count: 12 },
-          { _id: '5', name: 'Kesehatan', slug: 'kesehatan', description: 'Produk kesehatan', product_count: 8 }
-        ];
+        // Load categories from localStorage
+        const categoriesData = LocalStorageService.getCategories();
+        
+        // Load products from localStorage
+        const productsData = LocalStorageService.getProducts();
 
-        // Mock products with more variety
-        const mockProducts: Product[] = [
-          {
-            _id: '1',
-            name: 'Smartphone Android Terbaru',
-            slug: 'smartphone-android-terbaru',
-            description: 'Smartphone dengan teknologi terdepan',
-            price: 2500000,
-            original_price: 3000000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20smartphone%20android%20sleek%20design%20black%20color%20high%20quality%20product%20photography&image_size=square',
-            category: mockCategories[0],
-            is_featured: true,
-            stock: 50,
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z'
-          },
-          {
-            _id: '2',
-            name: 'Laptop Gaming Performance',
-            slug: 'laptop-gaming-performance',
-            description: 'Laptop gaming dengan performa tinggi',
-            price: 15000000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=gaming%20laptop%20black%20rgb%20keyboard%20modern%20design%20high%20performance%20product%20photography&image_size=square',
-            category: mockCategories[0],
-            is_featured: false,
-            stock: 25,
-            created_at: '2024-01-14T10:00:00Z',
-            updated_at: '2024-01-14T10:00:00Z'
-          },
-          {
-            _id: '3',
-            name: 'Sepatu Olahraga Premium',
-            slug: 'sepatu-olahraga-premium',
-            description: 'Sepatu olahraga dengan kualitas premium',
-            price: 850000,
-            original_price: 1200000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20sports%20shoes%20white%20blue%20modern%20athletic%20design%20product%20photography&image_size=square',
-            category: mockCategories[3],
-            is_featured: true,
-            stock: 100,
-            created_at: '2024-01-13T10:00:00Z',
-            updated_at: '2024-01-13T10:00:00Z'
-          },
-          {
-            _id: '4',
-            name: 'Kemeja Formal Pria',
-            slug: 'kemeja-formal-pria',
-            description: 'Kemeja formal berkualitas tinggi',
-            price: 350000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=formal%20mens%20shirt%20white%20cotton%20business%20professional%20product%20photography&image_size=square',
-            category: mockCategories[1],
-            is_featured: false,
-            stock: 75,
-            created_at: '2024-01-12T10:00:00Z',
-            updated_at: '2024-01-12T10:00:00Z'
-          },
-          {
-            _id: '5',
-            name: 'Blender Multifungsi',
-            slug: 'blender-multifungsi',
-            description: 'Blender dengan berbagai fungsi untuk dapur',
-            price: 450000,
-            original_price: 600000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20kitchen%20blender%20stainless%20steel%20multifunctional%20appliance%20product%20photography&image_size=square',
-            category: mockCategories[2],
-            is_featured: true,
-            stock: 30,
-            created_at: '2024-01-11T10:00:00Z',
-            updated_at: '2024-01-11T10:00:00Z'
-          },
-          {
-            _id: '6',
-            name: 'Vitamin C 1000mg',
-            slug: 'vitamin-c-1000mg',
-            description: 'Suplemen vitamin C untuk daya tahan tubuh',
-            price: 125000,
-            main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=vitamin%20c%20supplement%20bottle%20orange%20tablets%20health%20product%20photography&image_size=square',
-            category: mockCategories[4],
-            is_featured: false,
-            stock: 200,
-            created_at: '2024-01-10T10:00:00Z',
-            updated_at: '2024-01-10T10:00:00Z'
-          }
-        ];
-
-        setCategories(mockCategories);
-        setProducts(mockProducts);
-        setTotalItems(mockProducts.length);
-        setTotalPages(Math.ceil(mockProducts.length / itemsPerPage));
+        setCategories(categoriesData);
+        setProducts(productsData);
+        setTotalItems(productsData.length);
+        setTotalPages(Math.ceil(productsData.length / itemsPerPage));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {

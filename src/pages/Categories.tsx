@@ -1,74 +1,40 @@
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Package } from 'lucide-react';
+import { Category } from '../services/api';
+import { LocalStorageService } from '../services/localStorage';
+import { LoadingSpinner } from '../components/shared';
 
 export default function Categories() {
-  // Mock data - will be replaced with API calls
-  const categories = [
-    {
-      id: '1',
-      name: 'Elektronik',
-      slug: 'elektronik',
-      description: 'Smartphone, laptop, gadget, dan perangkat elektronik terbaru',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=electronics%20icon%20smartphone%20laptop%20modern%20blue%20minimalist%20design&image_size=square',
-      product_count: 245
-    },
-    {
-      id: '2',
-      name: 'Fashion',
-      slug: 'fashion',
-      description: 'Pakaian, sepatu, tas, dan aksesoris fashion terkini',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=fashion%20icon%20clothing%20shoes%20accessories%20stylish%20pink%20minimalist%20design&image_size=square',
-      product_count: 189
-    },
-    {
-      id: '3',
-      name: 'Rumah Tangga',
-      slug: 'rumah-tangga',
-      description: 'Peralatan dapur, furniture, dekorasi, dan kebutuhan rumah',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=home%20appliances%20icon%20kitchen%20furniture%20house%20green%20minimalist%20design&image_size=square',
-      product_count: 156
-    },
-    {
-      id: '4',
-      name: 'Olahraga',
-      slug: 'olahraga',
-      description: 'Peralatan fitness, sepatu olahraga, dan perlengkapan sport',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=sports%20equipment%20icon%20fitness%20athletic%20orange%20minimalist%20design&image_size=square',
-      product_count: 98
-    },
-    {
-      id: '5',
-      name: 'Kesehatan',
-      slug: 'kesehatan',
-      description: 'Suplemen, vitamin, alat kesehatan, dan produk perawatan',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=health%20medical%20icon%20vitamins%20healthcare%20red%20minimalist%20design&image_size=square',
-      product_count: 87
-    },
-    {
-      id: '6',
-      name: 'Kecantikan',
-      slug: 'kecantikan',
-      description: 'Skincare, makeup, parfum, dan produk perawatan kecantikan',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=beauty%20cosmetics%20icon%20skincare%20makeup%20purple%20minimalist%20design&image_size=square',
-      product_count: 134
-    },
-    {
-      id: '7',
-      name: 'Otomotif',
-      slug: 'otomotif',
-      description: 'Aksesoris mobil, motor, spare part, dan perawatan kendaraan',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=automotive%20icon%20car%20motorcycle%20parts%20black%20minimalist%20design&image_size=square',
-      product_count: 76
-    },
-    {
-      id: '8',
-      name: 'Makanan & Minuman',
-      slug: 'makanan-minuman',
-      description: 'Makanan ringan, minuman, bumbu masak, dan produk kuliner',
-      icon_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=food%20beverage%20icon%20snacks%20drinks%20yellow%20minimalist%20design&image_size=square',
-      product_count: 112
-    }
-  ];
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoading(true);
+      try {
+        // Load categories from localStorage
+        const categoriesData = LocalStorageService.getCategories();
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner size="large" text="Memuat kategori..." />
+      </div>
+    );
+  }
+
+
 
   const totalProducts = categories.reduce((sum, category) => sum + category.product_count, 0);
 

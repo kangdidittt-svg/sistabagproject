@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Heart, ShoppingCart, Eye, Tag } from 'lucide-react';
 import { Product } from '../../services/api';
+import { LocalStorageService } from '../../services/localStorage';
 
 interface ProductCardProps {
   product: Product;
@@ -20,6 +21,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
   imageSize = 'medium',
   layout = 'grid'
 }) => {
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  useEffect(() => {
+    setIsWishlisted(LocalStorageService.isInWishlist(product._id));
+  }, [product._id]);
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const newWishlistStatus = LocalStorageService.toggleWishlist(product._id);
+    setIsWishlisted(newWishlistStatus);
+  };
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -105,12 +118,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {/* Actions */}
               <div className="flex items-center space-x-2 ml-4">
                 {showWishlist && (
-                  <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                    <Heart className="h-4 w-4" />
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleWishlistToggle();
+                    }}
+                    className={`p-2 transition-colors ${
+                      isWishlisted 
+                        ? 'text-red-500 hover:text-red-600' 
+                        : 'text-gray-400 hover:text-red-500'
+                    }`}
+                  >
+                    <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-current' : ''}`} />
                   </button>
                 )}
                 {showAddToCart && (
-                  <button className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors">
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                  >
                     <ShoppingCart className="h-3 w-3" />
                   </button>
                 )}
@@ -158,21 +188,32 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
               {showWishlist && (
-                <button className="p-2 bg-white rounded-full text-gray-600 hover:text-red-500 transition-colors shadow-md">
-                  <Heart className="h-4 w-4" />
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleWishlistToggle();
+                  }}
+                  className={`p-2 bg-white rounded-full transition-colors shadow-md ${
+                    isWishlisted 
+                      ? 'text-red-500 hover:text-red-600' 
+                      : 'text-gray-600 hover:text-red-500'
+                  }`}
+                >
+                  <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-current' : ''}`} />
                 </button>
               )}
               {showAddToCart && (
-                <button className="p-2 bg-white rounded-full text-gray-600 hover:text-blue-600 transition-colors shadow-md">
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className="p-2 bg-white rounded-full text-gray-600 hover:text-blue-600 transition-colors shadow-md"
+                >
                   <ShoppingCart className="h-4 w-4" />
                 </button>
               )}
-              <Link
-                to={`/product/${product.slug}`}
-                className="p-2 bg-white rounded-full text-gray-600 hover:text-blue-600 transition-colors shadow-md"
-              >
-                <Eye className="h-4 w-4" />
-              </Link>
             </div>
           </div>
         </div>
@@ -237,14 +278,31 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {showWishlist && (
-              <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                <Heart className="h-4 w-4" />
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleWishlistToggle();
+                }}
+                className={`p-2 transition-colors ${
+                  isWishlisted 
+                    ? 'text-red-500 hover:text-red-600' 
+                    : 'text-gray-400 hover:text-red-500'
+                }`}
+              >
+                <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-current' : ''}`} />
               </button>
             )}
           </div>
           
           {showAddToCart && (
-            <button className="flex-1 ml-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors flex items-center justify-center">
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className="flex-1 ml-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors flex items-center justify-center"
+            >
               <ShoppingCart className="h-4 w-4 mr-2" />
               Add to Cart
             </button>

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Category } from '../../services/api';
 import { LoadingSpinner, Pagination, SearchBar, EmptyState } from '../../components/shared';
+import { LocalStorageService } from '../../services/localStorage';
 
 const AdminCategories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -28,77 +29,15 @@ const AdminCategories: React.FC = () => {
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const itemsPerPage = 12;
 
-  // Mock data - replace with actual API calls
+  // Load data from localStorage
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const mockCategories: Category[] = [
-          {
-            _id: '1',
-            name: 'Elektronik',
-            slug: 'elektronik',
-            description: 'Produk elektronik seperti smartphone, laptop, dan gadget lainnya',
-            icon: '',
-            product_count: 25,
-            created_at: '2024-01-15T10:00:00Z',
-            updated_at: '2024-01-15T10:00:00Z'
-          },
-          {
-            _id: '2',
-            name: 'Fashion',
-            slug: 'fashion',
-            description: 'Pakaian, sepatu, dan aksesoris fashion untuk pria dan wanita',
-            icon: '',
-            product_count: 18,
-            created_at: '2024-01-14T10:00:00Z',
-            updated_at: '2024-01-14T10:00:00Z'
-          },
-          {
-            _id: '3',
-            name: 'Olahraga',
-            slug: 'olahraga',
-            description: 'Peralatan olahraga dan aktivitas fisik',
-            icon: '',
-            product_count: 12,
-            created_at: '2024-01-13T10:00:00Z',
-            updated_at: '2024-01-13T10:00:00Z'
-          },
-          {
-            _id: '4',
-            name: 'Rumah Tangga',
-            slug: 'rumah-tangga',
-            description: 'Peralatan dan perlengkapan rumah tangga',
-            icon: '',
-            product_count: 15,
-            created_at: '2024-01-12T10:00:00Z',
-            updated_at: '2024-01-12T10:00:00Z'
-          },
-          {
-            _id: '5',
-            name: 'Kecantikan',
-            slug: 'kecantikan',
-            description: 'Produk kecantikan dan perawatan tubuh',
-            icon: '',
-            product_count: 8,
-            created_at: '2024-01-11T10:00:00Z',
-            updated_at: '2024-01-11T10:00:00Z'
-          },
-          {
-            _id: '6',
-            name: 'Makanan & Minuman',
-            slug: 'makanan-minuman',
-            description: 'Makanan, minuman, dan produk konsumsi',
-            icon: '',
-            product_count: 22,
-            created_at: '2024-01-10T10:00:00Z',
-            updated_at: '2024-01-10T10:00:00Z'
-          }
-        ];
-
-        setCategories(mockCategories);
-        setTotalItems(mockCategories.length);
-        setTotalPages(Math.ceil(mockCategories.length / itemsPerPage));
+        const categoriesData = LocalStorageService.getCategories();
+        setCategories(categoriesData);
+        setTotalItems(categoriesData.length);
+        setTotalPages(Math.ceil(categoriesData.length / itemsPerPage));
       } catch (error) {
         console.error('Error fetching categories:', error);
       } finally {
