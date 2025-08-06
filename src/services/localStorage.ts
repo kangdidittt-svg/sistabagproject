@@ -11,541 +11,302 @@ const STORAGE_KEYS = {
 
 // Default mock data
 const DEFAULT_CATEGORIES: Category[] = [
-  // Kategori Utama: Anak-anak
   {
     _id: '1',
+    name: 'Tote Bag',
+    slug: 'tote-bag',
+    description: 'Tas tote yang praktis dan stylish untuk berbagai kebutuhan',
+    icon: '',
+    product_count: 25,
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-01-15T10:00:00Z'
+  },
+  {
+    _id: '2',
+    name: 'Sling Bag / Crossbody Bag',
+    slug: 'sling-bag-crossbody-bag',
+    description: 'Tas selempang yang nyaman untuk aktivitas sehari-hari',
+    icon: '',
+    product_count: 30,
+    created_at: '2024-01-14T10:00:00Z',
+    updated_at: '2024-01-14T10:00:00Z'
+  },
+  {
+    _id: '3',
+    name: 'Backpack / Tas Ransel Dewasa',
+    slug: 'backpack-tas-ransel-dewasa',
+    description: 'Tas ransel berkualitas untuk dewasa dengan desain modern',
+    icon: '',
+    product_count: 35,
+    created_at: '2024-01-13T10:00:00Z',
+    updated_at: '2024-01-13T10:00:00Z'
+  },
+  {
+    _id: '4',
+    name: 'Shoulder Bag',
+    slug: 'shoulder-bag',
+    description: 'Tas bahu yang elegan dan fungsional',
+    icon: '',
+    product_count: 28,
+    created_at: '2024-01-12T10:00:00Z',
+    updated_at: '2024-01-12T10:00:00Z'
+  },
+  {
+    _id: '5',
+    name: 'Waist Bag / Tas Pinggang',
+    slug: 'waist-bag-tas-pinggang',
+    description: 'Tas pinggang praktis untuk aktivitas outdoor dan travel',
+    icon: '',
+    product_count: 20,
+    created_at: '2024-01-11T10:00:00Z',
+    updated_at: '2024-01-11T10:00:00Z'
+  },
+  {
+    _id: '6',
+    name: 'Travel Bag / Duffel Bag',
+    slug: 'travel-bag-duffel-bag',
+    description: 'Tas travel yang spacious untuk perjalanan jauh',
+    icon: '',
+    product_count: 18,
+    created_at: '2024-01-10T10:00:00Z',
+    updated_at: '2024-01-10T10:00:00Z'
+  },
+  {
+    _id: '7',
+    name: 'Tas Selempang Kerja',
+    slug: 'tas-selempang-kerja',
+    description: 'Tas selempang profesional untuk kebutuhan kerja',
+    icon: '',
+    product_count: 22,
+    created_at: '2024-01-09T10:00:00Z',
+    updated_at: '2024-01-09T10:00:00Z'
+  },
+  {
+    _id: '8',
+    name: 'Tas Laptop / Office Bag',
+    slug: 'tas-laptop-office-bag',
+    description: 'Tas laptop dan office bag untuk profesional',
+    icon: '',
+    product_count: 32,
+    created_at: '2024-01-08T10:00:00Z',
+    updated_at: '2024-01-08T10:00:00Z'
+  },
+  {
+    _id: '9',
+    name: 'Tas Kabin / Carry-on Bag',
+    slug: 'tas-kabin-carry-on-bag',
+    description: 'Tas kabin yang sesuai standar maskapai untuk perjalanan',
+    icon: '',
+    product_count: 15,
+    created_at: '2024-01-07T10:00:00Z',
+    updated_at: '2024-01-07T10:00:00Z'
+  },
+  {
+    _id: '10',
+    name: 'Tas Organizer',
+    slug: 'tas-organizer',
+    description: 'Tas organizer untuk menyimpan barang dengan rapi',
+    icon: '',
+    product_count: 12,
+    created_at: '2024-01-06T10:00:00Z',
+    updated_at: '2024-01-06T10:00:00Z'
+  },
+  {
+    _id: '11',
     name: 'Tas Sekolah Anak',
     slug: 'tas-sekolah-anak',
     description: 'Tas sekolah yang nyaman dan tahan lama untuk anak-anak',
     icon: '',
-    product_count: 15,
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-15T10:00:00Z'
-  },
-  {
-    _id: '2',
-    name: 'Tas Ransel Karakter',
-    slug: 'tas-ransel-karakter',
-    description: 'Tas ransel dengan karakter favorit anak-anak',
-    icon: '',
-    product_count: 20,
-    created_at: '2024-01-14T10:00:00Z',
-    updated_at: '2024-01-14T10:00:00Z'
-  },
-  {
-    _id: '3',
-    name: 'Tas Selempang Anak',
-    slug: 'tas-selempang-anak',
-    description: 'Tas selempang praktis untuk aktivitas anak',
-    icon: '',
-    product_count: 12,
-    created_at: '2024-01-13T10:00:00Z',
-    updated_at: '2024-01-13T10:00:00Z'
-  },
-  {
-    _id: '4',
-    name: 'Tas Makan Anak',
-    slug: 'tas-makan-anak',
-    description: 'Lunch bag dan tas makan untuk anak sekolah',
-    icon: '',
-    product_count: 18,
-    created_at: '2024-01-12T10:00:00Z',
-    updated_at: '2024-01-12T10:00:00Z'
-  },
-  {
-    _id: '5',
-    name: 'Tas Serut Anak',
-    slug: 'tas-serut-anak',
-    description: 'Drawstring bag untuk olahraga dan aktivitas anak',
-    icon: '',
-    product_count: 10,
-    created_at: '2024-01-11T10:00:00Z',
-    updated_at: '2024-01-11T10:00:00Z'
-  },
-  {
-    _id: '6',
-    name: 'Tas Mainan Anak',
-    slug: 'tas-mainan-anak',
-    description: 'Tas khusus untuk menyimpan mainan anak',
-    icon: '',
-    product_count: 8,
-    created_at: '2024-01-10T10:00:00Z',
-    updated_at: '2024-01-10T10:00:00Z'
-  },
-  // Kategori Utama: Remaja
-  {
-    _id: '7',
-    name: 'Tas Ransel Remaja',
-    slug: 'tas-ransel-remaja',
-    description: 'Tas ransel stylish untuk remaja',
-    icon: '',
     product_count: 25,
-    created_at: '2024-01-09T10:00:00Z',
-    updated_at: '2024-01-09T10:00:00Z'
-  },
-  {
-    _id: '8',
-    name: 'Tas Selempang Remaja',
-    slug: 'tas-selempang-remaja',
-    description: 'Tas selempang trendy untuk remaja aktif',
-    icon: '',
-    product_count: 22,
-    created_at: '2024-01-08T10:00:00Z',
-    updated_at: '2024-01-08T10:00:00Z'
-  },
-  {
-    _id: '9',
-    name: 'Tote Bag Remaja',
-    slug: 'tote-bag-remaja',
-    description: 'Tote bag casual untuk remaja',
-    icon: '',
-    product_count: 18,
-    created_at: '2024-01-07T10:00:00Z',
-    updated_at: '2024-01-07T10:00:00Z'
-  },
-  {
-    _id: '10',
-    name: 'Sling Bag Remaja',
-    slug: 'sling-bag-remaja',
-    description: 'Sling bag compact untuk remaja',
-    icon: '',
-    product_count: 15,
-    created_at: '2024-01-06T10:00:00Z',
-    updated_at: '2024-01-06T10:00:00Z'
-  },
-  {
-    _id: '11',
-    name: 'Tas Laptop Ringan',
-    slug: 'tas-laptop-ringan',
-    description: 'Tas laptop ringan untuk remaja dan mahasiswa',
-    icon: '',
-    product_count: 12,
     created_at: '2024-01-05T10:00:00Z',
     updated_at: '2024-01-05T10:00:00Z'
-  },
-  {
-    _id: '12',
-    name: 'Tas Travel Remaja',
-    slug: 'tas-travel-remaja',
-    description: 'Tas travel untuk liburan remaja',
-    icon: '',
-    product_count: 10,
-    created_at: '2024-01-04T10:00:00Z',
-    updated_at: '2024-01-04T10:00:00Z'
-  },
-  // Kategori Utama: Dewasa
-  {
-    _id: '13',
-    name: 'Tote Bag',
-    slug: 'tote-bag',
-    description: 'Tote bag elegan untuk dewasa',
-    icon: '',
-    product_count: 30,
-    created_at: '2024-01-03T10:00:00Z',
-    updated_at: '2024-01-03T10:00:00Z'
-  },
-  {
-    _id: '14',
-    name: 'Sling Bag Dewasa',
-    slug: 'sling-bag-dewasa',
-    description: 'Crossbody bag untuk aktivitas sehari-hari',
-    icon: '',
-    product_count: 25,
-    created_at: '2024-01-02T10:00:00Z',
-    updated_at: '2024-01-02T10:00:00Z'
-  },
-  {
-    _id: '15',
-    name: 'Backpack Dewasa',
-    slug: 'backpack-dewasa',
-    description: 'Tas ransel untuk dewasa dan profesional',
-    icon: '',
-    product_count: 28,
-    created_at: '2024-01-01T10:00:00Z',
-    updated_at: '2024-01-01T10:00:00Z'
-  },
-  {
-    _id: '16',
-    name: 'Shoulder Bag',
-    slug: 'shoulder-bag',
-    description: 'Tas bahu untuk gaya kasual dan formal',
-    icon: '',
-    product_count: 20,
-    created_at: '2023-12-31T10:00:00Z',
-    updated_at: '2023-12-31T10:00:00Z'
-  },
-  {
-    _id: '17',
-    name: 'Waist Bag',
-    slug: 'waist-bag',
-    description: 'Tas pinggang praktis untuk aktivitas outdoor',
-    icon: '',
-    product_count: 15,
-    created_at: '2023-12-30T10:00:00Z',
-    updated_at: '2023-12-30T10:00:00Z'
-  },
-  {
-    _id: '18',
-    name: 'Travel Bag',
-    slug: 'travel-bag',
-    description: 'Duffel bag untuk perjalanan jauh',
-    icon: '',
-    product_count: 18,
-    created_at: '2023-12-29T10:00:00Z',
-    updated_at: '2023-12-29T10:00:00Z'
-  },
-  {
-    _id: '19',
-    name: 'Tas Selempang Kerja',
-    slug: 'tas-selempang-kerja',
-    description: 'Tas selempang untuk keperluan kantor',
-    icon: '',
-    product_count: 22,
-    created_at: '2023-12-28T10:00:00Z',
-    updated_at: '2023-12-28T10:00:00Z'
-  },
-  {
-    _id: '20',
-    name: 'Tas Laptop Office',
-    slug: 'tas-laptop-office',
-    description: 'Office bag dengan kompartemen laptop',
-    icon: '',
-    product_count: 25,
-    created_at: '2023-12-27T10:00:00Z',
-    updated_at: '2023-12-27T10:00:00Z'
-  },
-  {
-    _id: '21',
-    name: 'Tas Kabin',
-    slug: 'tas-kabin',
-    description: 'Carry-on bag untuk perjalanan pesawat',
-    icon: '',
-    product_count: 12,
-    created_at: '2023-12-26T10:00:00Z',
-    updated_at: '2023-12-26T10:00:00Z'
-  },
-  {
-    _id: '22',
-    name: 'Tas Organizer',
-    slug: 'tas-organizer',
-    description: 'Tas dengan banyak kompartemen untuk organisasi',
-    icon: '',
-    product_count: 16,
-    created_at: '2023-12-25T10:00:00Z',
-    updated_at: '2023-12-25T10:00:00Z'
-  },
-  // Kategori Utama: Berdasarkan Fungsi
-  {
-    _id: '23',
-    name: 'Tas Sekolah',
-    slug: 'tas-sekolah',
-    description: 'Tas untuk keperluan sekolah semua usia',
-    icon: '',
-    product_count: 35,
-    created_at: '2023-12-24T10:00:00Z',
-    updated_at: '2023-12-24T10:00:00Z'
-  },
-  {
-    _id: '24',
-    name: 'Tas Kantor',
-    slug: 'tas-kantor',
-    description: 'Tas profesional untuk keperluan kantor',
-    icon: '',
-    product_count: 28,
-    created_at: '2023-12-23T10:00:00Z',
-    updated_at: '2023-12-23T10:00:00Z'
-  },
-  {
-    _id: '25',
-    name: 'Tas Belanja',
-    slug: 'tas-belanja',
-    description: 'Shopping bag untuk berbelanja sehari-hari',
-    icon: '',
-    product_count: 20,
-    created_at: '2023-12-22T10:00:00Z',
-    updated_at: '2023-12-22T10:00:00Z'
-  },
-  {
-    _id: '26',
-    name: 'Tas Makeup',
-    slug: 'tas-makeup',
-    description: 'Tas kosmetik untuk peralatan makeup',
-    icon: '',
-    product_count: 18,
-    created_at: '2023-12-21T10:00:00Z',
-    updated_at: '2023-12-21T10:00:00Z'
-  },
-  {
-    _id: '27',
-    name: 'Tas Gym',
-    slug: 'tas-gym',
-    description: 'Tas olahraga untuk gym dan fitness',
-    icon: '',
-    product_count: 22,
-    created_at: '2023-12-20T10:00:00Z',
-    updated_at: '2023-12-20T10:00:00Z'
-  },
-  {
-    _id: '28',
-    name: 'Tas Bayi',
-    slug: 'tas-bayi',
-    description: 'Diaper bag untuk keperluan bayi',
-    icon: '',
-    product_count: 15,
-    created_at: '2023-12-19T10:00:00Z',
-    updated_at: '2023-12-19T10:00:00Z'
-  },
-  {
-    _id: '29',
-    name: 'Tas Kamera',
-    slug: 'tas-kamera',
-    description: 'Tas khusus untuk peralatan fotografi',
-    icon: '',
-    product_count: 12,
-    created_at: '2023-12-18T10:00:00Z',
-    updated_at: '2023-12-18T10:00:00Z'
-  },
-  {
-    _id: '30',
-    name: 'Tas Anti Maling',
-    slug: 'tas-anti-maling',
-    description: 'Anti-theft bag dengan fitur keamanan',
-    icon: '',
-    product_count: 14,
-    created_at: '2023-12-17T10:00:00Z',
-    updated_at: '2023-12-17T10:00:00Z'
-  },
-  // Kategori Utama: Berdasarkan Gaya
-  {
-    _id: '31',
-    name: 'Tas Kasual',
-    slug: 'tas-kasual',
-    description: 'Tas untuk gaya santai sehari-hari',
-    icon: '',
-    product_count: 40,
-    created_at: '2023-12-16T10:00:00Z',
-    updated_at: '2023-12-16T10:00:00Z'
-  },
-  {
-    _id: '32',
-    name: 'Tas Fashion',
-    slug: 'tas-fashion',
-    description: 'Tas stylish mengikuti tren fashion',
-    icon: '',
-    product_count: 35,
-    created_at: '2023-12-15T10:00:00Z',
-    updated_at: '2023-12-15T10:00:00Z'
-  },
-  {
-    _id: '33',
-    name: 'Tas Formal',
-    slug: 'tas-formal',
-    description: 'Tas untuk acara formal dan bisnis',
-    icon: '',
-    product_count: 25,
-    created_at: '2023-12-14T10:00:00Z',
-    updated_at: '2023-12-14T10:00:00Z'
-  },
-  {
-    _id: '34',
-    name: 'Tas Outdoor',
-    slug: 'tas-outdoor',
-    description: 'Tas untuk hiking dan aktivitas outdoor',
-    icon: '',
-    product_count: 20,
-    created_at: '2023-12-13T10:00:00Z',
-    updated_at: '2023-12-13T10:00:00Z'
-  },
-  {
-    _id: '35',
-    name: 'Tas Etnik',
-    slug: 'tas-etnik',
-    description: 'Tas handmade dengan sentuhan etnik',
-    icon: '',
-    product_count: 18,
-    created_at: '2023-12-12T10:00:00Z',
-    updated_at: '2023-12-12T10:00:00Z'
   }
 ];
 
 const DEFAULT_PRODUCTS: Product[] = [
-  // Produk Tas Sekolah Anak
+  // Tote Bag
   {
     _id: '1',
-    name: 'Tas Sekolah Anak Karakter Unicorn',
-    slug: 'tas-sekolah-anak-karakter-unicorn',
-    description: 'Tas sekolah dengan desain unicorn yang lucu, dilengkapi kompartemen untuk buku dan alat tulis',
-    price: 125000,
-    original_price: 150000,
-    category: DEFAULT_CATEGORIES[0], // Tas Sekolah Anak
+    name: 'Tote Bag Canvas Premium',
+    slug: 'tote-bag-canvas-premium',
+    description: 'Tote bag canvas berkualitas tinggi dengan desain minimalis dan elegan',
+    price: 185000,
+    original_price: 220000,
+    category: DEFAULT_CATEGORIES[0], // Tote Bag
     is_featured: true,
-    stock: 50,
-    images: [{ _id: '1', url: '', alt_text: 'Tas Sekolah Anak Karakter Unicorn', is_primary: true }],
-    specifications: { 'Material': 'Polyester', 'Ukuran': '35x25x12 cm', 'Berat': '400g', 'Kompartemen': '3' },
+    stock: 45,
+    images: [{ _id: '1', url: '', alt_text: 'Tote Bag Canvas Premium', is_primary: true }],
+    specifications: { 'Material': 'Canvas Premium', 'Ukuran': '40x35x12 cm', 'Berat': '450g', 'Handle': 'Kulit Sintetis' },
     created_at: '2024-01-15T10:00:00Z',
     updated_at: '2024-01-15T10:00:00Z'
   },
+  // Sling Bag / Crossbody Bag
   {
     _id: '2',
-    name: 'Tas Ransel Karakter Superhero',
-    slug: 'tas-ransel-karakter-superhero',
-    description: 'Tas ransel dengan karakter superhero favorit anak-anak, tahan lama dan nyaman digunakan',
-    price: 135000,
-    category: DEFAULT_CATEGORIES[1], // Tas Ransel Karakter
-    is_featured: false,
-    stock: 35,
-    images: [{ _id: '2', url: '', alt_text: 'Tas Ransel Karakter Superhero', is_primary: true }],
-    specifications: { 'Material': 'Canvas', 'Ukuran': '30x20x15 cm', 'Berat': '350g', 'Karakter': 'Superhero' },
+    name: 'Crossbody Bag Leather Style',
+    slug: 'crossbody-bag-leather-style',
+    description: 'Tas selempang dengan tampilan kulit yang stylish untuk aktivitas sehari-hari',
+    price: 165000,
+    category: DEFAULT_CATEGORIES[1], // Sling Bag / Crossbody Bag
+    is_featured: true,
+    stock: 38,
+    images: [{ _id: '2', url: '', alt_text: 'Crossbody Bag Leather Style', is_primary: true }],
+    specifications: { 'Material': 'PU Leather', 'Ukuran': '25x18x8 cm', 'Berat': '320g', 'Tali': 'Adjustable' },
     created_at: '2024-01-14T10:00:00Z',
     updated_at: '2024-01-14T10:00:00Z'
   },
+  // Backpack / Tas Ransel Dewasa
   {
     _id: '3',
-    name: 'Tas Selempang Anak Colorful',
-    slug: 'tas-selempang-anak-colorful',
-    description: 'Tas selempang kecil dengan warna-warna cerah untuk aktivitas anak sehari-hari',
-    price: 75000,
-    original_price: 95000,
-    category: DEFAULT_CATEGORIES[2], // Tas Selempang Anak
+    name: 'Backpack Urban Professional',
+    slug: 'backpack-urban-professional',
+    description: 'Tas ransel modern dengan kompartemen laptop untuk profesional muda',
+    price: 285000,
+    original_price: 350000,
+    category: DEFAULT_CATEGORIES[2], // Backpack / Tas Ransel Dewasa
     is_featured: true,
-    stock: 60,
-    images: [{ _id: '3', url: '', alt_text: 'Tas Selempang Anak Colorful', is_primary: true }],
-    specifications: { 'Material': 'Nylon', 'Ukuran': '20x15x8 cm', 'Berat': '200g', 'Warna': 'Multi' },
+    stock: 32,
+    images: [{ _id: '3', url: '', alt_text: 'Backpack Urban Professional', is_primary: true }],
+    specifications: { 'Material': 'Nylon Waterproof', 'Ukuran': '45x32x18 cm', 'Berat': '750g', 'Laptop': '15.6 inch' },
     created_at: '2024-01-13T10:00:00Z',
     updated_at: '2024-01-13T10:00:00Z'
   },
-  // Produk Tas Remaja
+  // Shoulder Bag
   {
     _id: '4',
-    name: 'Tas Ransel Remaja Minimalis',
-    slug: 'tas-ransel-remaja-minimalis',
-    description: 'Tas ransel dengan desain minimalis dan modern untuk remaja aktif',
-    price: 185000,
-    category: DEFAULT_CATEGORIES[6], // Tas Ransel Remaja
-    is_featured: true,
-    stock: 40,
-    images: [{ _id: '4', url: '', alt_text: 'Tas Ransel Remaja Minimalis', is_primary: true }],
-    specifications: { 'Material': 'Canvas Premium', 'Ukuran': '40x30x15 cm', 'Berat': '600g', 'Laptop': '14 inch' },
+    name: 'Shoulder Bag Elegant',
+    slug: 'shoulder-bag-elegant',
+    description: 'Tas bahu elegan dengan desain timeless untuk berbagai acara',
+    price: 225000,
+    category: DEFAULT_CATEGORIES[3], // Shoulder Bag
+    is_featured: false,
+    stock: 28,
+    images: [{ _id: '4', url: '', alt_text: 'Shoulder Bag Elegant', is_primary: true }],
+    specifications: { 'Material': 'Synthetic Leather', 'Ukuran': '30x25x10 cm', 'Berat': '480g', 'Closure': 'Magnetic' },
     created_at: '2024-01-12T10:00:00Z',
     updated_at: '2024-01-12T10:00:00Z'
   },
+  // Waist Bag / Tas Pinggang
   {
     _id: '5',
-    name: 'Tote Bag Remaja Aesthetic',
-    slug: 'tote-bag-remaja-aesthetic',
-    description: 'Tote bag dengan desain aesthetic yang trendy untuk remaja',
-    price: 95000,
-    original_price: 120000,
-    category: DEFAULT_CATEGORIES[8], // Tote Bag Remaja
-    is_featured: false,
+    name: 'Waist Bag Outdoor Adventure',
+    slug: 'waist-bag-outdoor-adventure',
+    description: 'Tas pinggang tahan air untuk aktivitas outdoor dan traveling',
+    price: 125000,
+    original_price: 155000,
+    category: DEFAULT_CATEGORIES[4], // Waist Bag / Tas Pinggang
+    is_featured: true,
     stock: 55,
-    images: [{ _id: '5', url: '', alt_text: 'Tote Bag Remaja Aesthetic', is_primary: true }],
-    specifications: { 'Material': 'Canvas', 'Ukuran': '35x40x10 cm', 'Berat': '300g', 'Handle': 'Panjang' },
+    images: [{ _id: '5', url: '', alt_text: 'Waist Bag Outdoor Adventure', is_primary: true }],
+    specifications: { 'Material': 'Ripstop Nylon', 'Ukuran': '25x15x8 cm', 'Berat': '180g', 'Waterproof': 'Yes' },
     created_at: '2024-01-11T10:00:00Z',
     updated_at: '2024-01-11T10:00:00Z'
   },
-  // Produk Tas Dewasa
+  // Travel Bag / Duffel Bag
   {
     _id: '6',
-    name: 'Tote Bag Premium Leather',
-    slug: 'tote-bag-premium-leather',
-    description: 'Tote bag kulit premium untuk gaya elegan sehari-hari',
-    price: 350000,
+    name: 'Travel Duffel Bag Large',
+    slug: 'travel-duffel-bag-large',
+    description: 'Tas travel berkapasitas besar dengan roda untuk perjalanan jauh',
+    price: 385000,
     original_price: 450000,
-    category: DEFAULT_CATEGORIES[12], // Tote Bag
+    category: DEFAULT_CATEGORIES[5], // Travel Bag / Duffel Bag
     is_featured: true,
-    stock: 25,
-    images: [{ _id: '6', url: '', alt_text: 'Tote Bag Premium Leather', is_primary: true }],
-    specifications: { 'Material': 'Kulit Asli', 'Ukuran': '40x35x15 cm', 'Berat': '800g', 'Warna': 'Coklat' },
+    stock: 22,
+    images: [{ _id: '6', url: '', alt_text: 'Travel Duffel Bag Large', is_primary: true }],
+    specifications: { 'Material': 'Polyester Heavy Duty', 'Ukuran': '65x35x30 cm', 'Berat': '1.2kg', 'Wheels': 'Yes' },
     created_at: '2024-01-10T10:00:00Z',
     updated_at: '2024-01-10T10:00:00Z'
   },
+  // Tas Selempang Kerja
   {
     _id: '7',
-    name: 'Backpack Dewasa Professional',
-    slug: 'backpack-dewasa-professional',
-    description: 'Tas ransel profesional dengan kompartemen laptop dan desain elegan',
-    price: 285000,
-    category: DEFAULT_CATEGORIES[14], // Backpack Dewasa
+    name: 'Messenger Bag Professional',
+    slug: 'messenger-bag-professional',
+    description: 'Tas selempang profesional untuk keperluan kerja dengan kompartemen laptop',
+    price: 265000,
+    category: DEFAULT_CATEGORIES[6], // Tas Selempang Kerja
     is_featured: true,
-    stock: 30,
-    images: [{ _id: '7', url: '', alt_text: 'Backpack Dewasa Professional', is_primary: true }],
-    specifications: { 'Material': 'Polyester Premium', 'Ukuran': '45x32x18 cm', 'Laptop': '15.6 inch', 'USB Port': 'Ya' },
+    stock: 35,
+    images: [{ _id: '7', url: '', alt_text: 'Messenger Bag Professional', is_primary: true }],
+    specifications: { 'Material': 'Canvas Waterproof', 'Ukuran': '38x28x12 cm', 'Laptop': '14 inch', 'Pockets': '6' },
     created_at: '2024-01-09T10:00:00Z',
     updated_at: '2024-01-09T10:00:00Z'
   },
+  // Tas Laptop / Office Bag
   {
     _id: '8',
-    name: 'Tas Laptop Office Executive',
-    slug: 'tas-laptop-office-executive',
-    description: 'Tas laptop executive untuk keperluan kantor dengan desain formal',
+    name: 'Laptop Office Bag Executive',
+    slug: 'laptop-office-bag-executive',
+    description: 'Tas laptop executive dengan desain formal untuk profesional',
     price: 425000,
     original_price: 550000,
-    category: DEFAULT_CATEGORIES[19], // Tas Laptop Office
+    category: DEFAULT_CATEGORIES[7], // Tas Laptop / Office Bag
     is_featured: true,
-    stock: 20,
-    images: [{ _id: '8', url: '', alt_text: 'Tas Laptop Office Executive', is_primary: true }],
-    specifications: { 'Material': 'Kulit Sintetis', 'Ukuran': '42x30x8 cm', 'Laptop': '15 inch', 'Kompartemen': '5' },
+    stock: 18,
+    images: [{ _id: '8', url: '', alt_text: 'Laptop Office Bag Executive', is_primary: true }],
+    specifications: { 'Material': 'Genuine Leather', 'Ukuran': '42x30x8 cm', 'Laptop': '15.6 inch', 'Compartments': '5' },
     created_at: '2024-01-08T10:00:00Z',
     updated_at: '2024-01-08T10:00:00Z'
   },
-  // Produk Berdasarkan Fungsi
+  // Tas Kabin / Carry-on Bag
   {
     _id: '9',
-    name: 'Tas Gym Sporty Duffel',
-    slug: 'tas-gym-sporty-duffel',
-    description: 'Tas gym dengan kompartemen sepatu dan botol minum',
-    price: 165000,
-    category: DEFAULT_CATEGORIES[26], // Tas Gym
+    name: 'Cabin Bag Airline Approved',
+    slug: 'cabin-bag-airline-approved',
+    description: 'Tas kabin yang memenuhi standar maskapai dengan roda dan handle telescopic',
+    price: 485000,
+    category: DEFAULT_CATEGORIES[8], // Tas Kabin / Carry-on Bag
     is_featured: false,
-    stock: 45,
-    images: [{ _id: '9', url: '', alt_text: 'Tas Gym Sporty Duffel', is_primary: true }],
-    specifications: { 'Material': 'Nylon Waterproof', 'Ukuran': '50x25x25 cm', 'Kompartemen Sepatu': 'Ya', 'Tahan Air': 'Ya' },
+    stock: 15,
+    images: [{ _id: '9', url: '', alt_text: 'Cabin Bag Airline Approved', is_primary: true }],
+    specifications: { 'Material': 'ABS Hard Shell', 'Ukuran': '55x35x20 cm', 'Weight': '2.8kg', 'TSA Lock': 'Yes' },
     created_at: '2024-01-07T10:00:00Z',
     updated_at: '2024-01-07T10:00:00Z'
   },
+  // Tas Organizer
   {
     _id: '10',
-    name: 'Tas Anti Maling Smart Security',
-    slug: 'tas-anti-maling-smart-security',
-    description: 'Tas dengan fitur anti maling, USB charging port dan material cut-resistant',
-    price: 245000,
-    original_price: 320000,
-    category: DEFAULT_CATEGORIES[29], // Tas Anti Maling
+    name: 'Multi Compartment Organizer',
+    slug: 'multi-compartment-organizer',
+    description: 'Tas organizer dengan banyak kompartemen untuk menyimpan barang dengan rapi',
+    price: 145000,
+    original_price: 185000,
+    category: DEFAULT_CATEGORIES[9], // Tas Organizer
     is_featured: true,
-    stock: 15,
-    images: [{ _id: '10', url: '', alt_text: 'Tas Anti Maling Smart Security', is_primary: true }],
-    specifications: { 'Material': 'Cut-Resistant Fabric', 'Ukuran': '42x28x15 cm', 'USB Port': 'Ya', 'RFID Blocking': 'Ya' },
+    stock: 40,
+    images: [{ _id: '10', url: '', alt_text: 'Multi Compartment Organizer', is_primary: true }],
+    specifications: { 'Material': 'Nylon Ripstop', 'Ukuran': '30x20x15 cm', 'Compartments': '12', 'Zippers': 'YKK' },
     created_at: '2024-01-06T10:00:00Z',
     updated_at: '2024-01-06T10:00:00Z'
   },
-  // Produk Berdasarkan Gaya
+  // Tas Sekolah Anak
   {
     _id: '11',
-    name: 'Tas Fashion Trendy Sling',
-    slug: 'tas-fashion-trendy-sling',
-    description: 'Tas sling dengan desain fashion terkini dan warna-warna trendy',
-    price: 145000,
-    category: DEFAULT_CATEGORIES[31], // Tas Fashion
+    name: 'Kids School Backpack Colorful',
+    slug: 'kids-school-backpack-colorful',
+    description: 'Tas sekolah anak dengan desain colorful dan kompartemen yang aman',
+    price: 125000,
+    category: DEFAULT_CATEGORIES[10], // Tas Sekolah Anak
     is_featured: false,
-    stock: 35,
-    images: [{ _id: '11', url: '', alt_text: 'Tas Fashion Trendy Sling', is_primary: true }],
-    specifications: { 'Material': 'PU Leather', 'Ukuran': '25x18x8 cm', 'Strap': 'Adjustable', 'Warna': 'Beige' },
+    stock: 60,
+    images: [{ _id: '11', url: '', alt_text: 'Kids School Backpack Colorful', is_primary: true }],
+    specifications: { 'Material': 'Polyester Safe', 'Ukuran': '35x25x12 cm', 'Weight': '350g', 'Reflective': 'Yes' },
     created_at: '2024-01-05T10:00:00Z',
     updated_at: '2024-01-05T10:00:00Z'
   },
   {
     _id: '12',
-    name: 'Tas Outdoor Hiking Adventure',
-    slug: 'tas-outdoor-hiking-adventure',
-    description: 'Tas hiking dengan kapasitas besar dan fitur outdoor lengkap',
-    price: 385000,
-    original_price: 480000,
-    category: DEFAULT_CATEGORIES[33], // Tas Outdoor
+    name: 'Premium Tote Bag Leather',
+    slug: 'premium-tote-bag-leather',
+    description: 'Tote bag kulit premium dengan kualitas terbaik untuk gaya elegan',
+    price: 650000,
+    original_price: 780000,
+    category: DEFAULT_CATEGORIES[0], // Tote Bag
     is_featured: true,
-    stock: 18,
-    images: [{ _id: '12', url: '', alt_text: 'Tas Outdoor Hiking Adventure', is_primary: true }],
-    specifications: { 'Material': 'Ripstop Nylon', 'Kapasitas': '40L', 'Tahan Air': 'Ya', 'Rain Cover': 'Included' },
+    stock: 12,
+    images: [{ _id: '12', url: '', alt_text: 'Premium Tote Bag Leather', is_primary: true }],
+    specifications: { 'Material': 'Genuine Leather', 'Ukuran': '42x38x15 cm', 'Weight': '650g', 'Hardware': 'Gold' },
     created_at: '2024-01-04T10:00:00Z',
     updated_at: '2024-01-04T10:00:00Z'
   }
@@ -554,39 +315,39 @@ const DEFAULT_PRODUCTS: Product[] = [
 const DEFAULT_PROMOS: Promo[] = [
   {
     _id: '1',
-    title: 'Flash Sale Tas Sekolah',
-    description: 'Diskon hingga 30% untuk semua tas sekolah anak dan remaja',
+    title: 'Flash Sale Tas Sekolah Anak',
+    description: 'Diskon hingga 25% untuk semua tas sekolah anak dengan kualitas terbaik',
     discount_percentage: 25,
     max_discount: 50000,
     start_date: '2024-01-01T00:00:00Z',
     end_date: '2024-12-31T23:59:59Z',
-    applicable_categories: [DEFAULT_CATEGORIES[0], DEFAULT_CATEGORIES[6], DEFAULT_CATEGORIES[22]], // Tas Sekolah Anak, Tas Ransel Remaja, Tas Sekolah
+    applicable_categories: [DEFAULT_CATEGORIES[10]], // Tas Sekolah Anak
     is_active: true,
     created_at: '2024-01-01T10:00:00Z',
     updated_at: '2024-01-01T10:00:00Z'
   },
   {
     _id: '2',
-    title: 'Promo Tas Kantor Professional',
-    description: 'Diskon spesial untuk tas laptop dan tas kantor professional',
+    title: 'Promo Office & Professional Bags',
+    description: 'Diskon spesial untuk tas laptop, office bag, dan tas selempang kerja',
     discount_percentage: 20,
     max_discount: 100000,
     start_date: '2024-01-15T00:00:00Z',
     end_date: '2024-06-30T23:59:59Z',
-    applicable_categories: [DEFAULT_CATEGORIES[19], DEFAULT_CATEGORIES[23]], // Tas Laptop Office, Tas Kantor
+    applicable_categories: [DEFAULT_CATEGORIES[6], DEFAULT_CATEGORIES[7]], // Tas Selempang Kerja, Tas Laptop / Office Bag
     is_active: true,
     created_at: '2024-01-15T10:00:00Z',
     updated_at: '2024-01-15T10:00:00Z'
   },
   {
     _id: '3',
-    title: 'Weekend Sale Tas Fashion',
-    description: 'Diskon weekend untuk tas fashion dan tote bag trendy',
+    title: 'Weekend Sale Tote & Crossbody',
+    description: 'Diskon weekend untuk tote bag dan crossbody bag stylish',
     discount_percentage: 15,
     max_discount: 75000,
     start_date: '2024-02-01T00:00:00Z',
     end_date: '2024-05-31T23:59:59Z',
-    applicable_categories: [DEFAULT_CATEGORIES[12], DEFAULT_CATEGORIES[31]], // Tote Bag, Tas Fashion
+    applicable_categories: [DEFAULT_CATEGORIES[0], DEFAULT_CATEGORIES[1]], // Tote Bag, Sling Bag / Crossbody Bag
     is_active: true,
     created_at: '2024-02-01T10:00:00Z',
     updated_at: '2024-02-01T10:00:00Z'
