@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { DashboardStats } from '../../components/shared';
+import { DashboardStats, SalesReport } from '../../components/shared';
 import { 
   Package, 
   Tag, 
@@ -116,6 +116,30 @@ const AdminDashboard: React.FC = () => {
         </p>
       </div>
 
+      {/* Quick Actions */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {quickActions.map((action, index) => {
+            const Icon = action.icon;
+            return (
+              <Link
+                key={index}
+                to={action.link}
+                className="bg-white border border-gray-200 hover:border-gray-300 rounded-lg p-4 transition-all duration-200 hover:shadow-sm group"
+              >
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="p-2 rounded-lg bg-gray-50 group-hover:bg-gray-100 transition-colors">
+                    <Icon className="h-5 w-5 text-gray-600" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-900">{action.title}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-sm border p-6">
@@ -181,30 +205,10 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* Sales Report */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Aksi Cepat</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickActions.map((action, index) => {
-            const Icon = action.icon;
-            return (
-              <Link
-                key={index}
-                to={action.link}
-                className={`${action.color} text-white p-6 rounded-lg transition-colors group`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <Icon className="h-6 w-6" />
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                    →
-                  </div>
-                </div>
-                <h3 className="font-semibold mb-1">{action.title}</h3>
-                <p className="text-sm opacity-90">{action.description}</p>
-              </Link>
-            );
-          })}
-        </div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Laporan Penjualan</h2>
+        <SalesReport />
       </div>
 
       {/* Dashboard Statistics */}

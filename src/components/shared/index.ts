@@ -10,3 +10,4 @@ export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as FeaturedProductsSlider } from './FeaturedProductsSlider';
 export { default as DashboardStats } from './DashboardStats';
 export { default as NotificationBell } from './NotificationBell';
+export { default as SalesReport } from './SalesReport';
