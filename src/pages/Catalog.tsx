@@ -7,7 +7,8 @@ import {
   FilterPanel, 
   Pagination, 
   LoadingSpinner, 
-  EmptyState 
+  EmptyState,
+  FeaturedProductsSlider 
 } from '../components/shared';
 import { Product, Category } from '../services/api';
 import { LocalStorageService } from '../services/localStorage';
@@ -142,6 +143,9 @@ export default function Catalog() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Katalog Produk</h1>
         <p className="text-gray-600">Temukan produk yang Anda butuhkan dari berbagai kategori</p>
       </div>
+
+      {/* Featured Products Slider */}
+      <FeaturedProductsSlider />
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">

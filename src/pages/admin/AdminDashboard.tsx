@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { DashboardStats } from '../../components/shared';
 import { 
   Package, 
   Tag, 
@@ -205,6 +206,9 @@ const AdminDashboard: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Dashboard Statistics */}
+      <DashboardStats className="mb-8" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Activities */}

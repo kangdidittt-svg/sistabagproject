@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { NotificationBell } from '../shared';
 import { 
   Menu, 
   X, 
@@ -13,7 +14,6 @@ import {
   LogOut, 
   User,
   Eye,
-  Bell,
   Search
 } from 'lucide-react';
 
@@ -214,10 +214,7 @@ const AdminLayout: React.FC = () => {
               >
                 <Eye className="h-5 w-5" />
               </Link>
-              <button className="text-gray-400 hover:text-gray-600 transition-colors relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
-              </button>
+              <NotificationBell />
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                   <User className="h-4 w-4 text-gray-600" />

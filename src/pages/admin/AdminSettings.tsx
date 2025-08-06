@@ -21,6 +21,17 @@ const AdminSettings: React.FC = () => {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   
+  // Notification settings state
+  const [lowStockThreshold, setLowStockThreshold] = useState(5);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    browserNotifications: true,
+    whatsappNotifications: false,
+    dailyReport: false
+  });
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  
   // New user form state
   const [showAddUserForm, setShowAddUserForm] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -38,7 +49,57 @@ const AdminSettings: React.FC = () => {
     // Fetch backup info and users on component mount
     fetchBackupInfo();
     fetchUsers();
+    loadNotificationSettings();
   }, []);
+
+  const loadNotificationSettings = () => {
+    try {
+      const savedThreshold = localStorage.getItem('lowStockThreshold');
+      const savedSettings = localStorage.getItem('notificationSettings');
+      const savedWhatsappNumber = localStorage.getItem('whatsappNumber');
+      
+      if (savedThreshold) {
+        setLowStockThreshold(parseInt(savedThreshold));
+      }
+      
+      if (savedSettings) {
+        setNotificationSettings(JSON.parse(savedSettings));
+      }
+      
+      if (savedWhatsappNumber) {
+        setWhatsappNumber(savedWhatsappNumber);
+      }
+    } catch (error) {
+      console.error('Error loading notification settings:', error);
+    }
+  };
+
+  const saveNotificationSettings = async () => {
+    setSettingsLoading(true);
+    try {
+      // Save to localStorage
+      localStorage.setItem('lowStockThreshold', lowStockThreshold.toString());
+      localStorage.setItem('notificationSettings', JSON.stringify(notificationSettings));
+      localStorage.setItem('whatsappNumber', whatsappNumber);
+      
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      alert('Pengaturan notifikasi berhasil disimpan!');
+    } catch (error) {
+      console.error('Error saving notification settings:', error);
+      alert('Gagal menyimpan pengaturan notifikasi.');
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  const handleNotificationSettingChange = (key: string, value?: boolean) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [key]: value !== undefined ? value : !prev[key as keyof typeof prev]
+    }));
+  };
 
   const fetchBackupInfo = async () => {
     try {
@@ -298,6 +359,167 @@ const AdminSettings: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Pengaturan</h1>
+      </div>
+
+      {/* Notification Settings Section */}
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <h3 className="text-lg font-medium leading-6 text-gray-900">Pengaturan Notifikasi</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Atur notifikasi untuk stok rendah dan pengaturan lainnya.
+          </p>
+        </div>
+        <div className="px-4 py-5 sm:p-6">
+          <div className="space-y-6">
+            {/* Low Stock Threshold */}
+            <div>
+              <label htmlFor="lowStockThreshold" className="block text-sm font-medium text-gray-700">
+                Batas Minimal Stok Rendah
+              </label>
+              <div className="mt-1 flex items-center space-x-3">
+                <input
+                  type="number"
+                  id="lowStockThreshold"
+                  min="1"
+                  max="50"
+                  value={lowStockThreshold}
+                  onChange={(e) => setLowStockThreshold(parseInt(e.target.value) || 1)}
+                  className="block w-20 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                <span className="text-sm text-gray-500">
+                  unit (produk dengan stok di bawah angka ini akan muncul notifikasi)
+                </span>
+              </div>
+            </div>
+
+             {/* WhatsApp Number */}
+             <div>
+               <label htmlFor="whatsappNumber" className="block text-sm font-medium text-gray-700">
+                 Nomor WhatsApp
+               </label>
+               <div className="mt-1">
+                 <input
+                   type="tel"
+                   id="whatsappNumber"
+                   placeholder="Contoh: +6281234567890"
+                   value={whatsappNumber}
+                   onChange={(e) => setWhatsappNumber(e.target.value)}
+                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                 />
+                 <p className="mt-1 text-sm text-gray-500">
+                   Masukkan nomor WhatsApp dengan kode negara (contoh: +6281234567890)
+                 </p>
+               </div>
+             </div>
+
+             {/* Notification Types */}
+             <div>
+               <h4 className="text-base font-medium text-gray-900 mb-4">Jenis Notifikasi</h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Notifikasi Email</span>
+                    <p className="text-sm text-gray-500">Kirim email ketika ada produk dengan stok rendah</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNotificationSettingChange('emailNotifications')}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      notificationSettings.emailNotifications ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        notificationSettings.emailNotifications ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Notifikasi Browser</span>
+                    <p className="text-sm text-gray-500">Tampilkan notifikasi di browser admin</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNotificationSettingChange('browserNotifications')}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      notificationSettings.browserNotifications ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        notificationSettings.browserNotifications ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Notifikasi WhatsApp</span>
+                    <p className="text-sm text-gray-500">Kirim notifikasi via WhatsApp</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNotificationSettingChange('whatsappNotifications')}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      notificationSettings.whatsappNotifications ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        notificationSettings.whatsappNotifications ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Laporan Harian</span>
+                    <p className="text-sm text-gray-500">Kirim laporan stok harian via email</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNotificationSettingChange('dailyReport')}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      notificationSettings.dailyReport ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        notificationSettings.dailyReport ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Save Button */}
+            <div className="pt-4 border-t border-gray-200">
+              <button
+                onClick={saveNotificationSettings}
+                disabled={settingsLoading}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300"
+              >
+                {settingsLoading ? (
+                  <>
+                    <LoadingSpinner size="small" className="mr-2" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Simpan Pengaturan
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Backup & Restore Section */}

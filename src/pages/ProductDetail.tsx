@@ -44,6 +44,15 @@ export default function ProductDetail() {
     }
   };
 
+  const handleContactSeller = () => {
+    if (product) {
+      const productUrl = `${window.location.origin}/product/${product.slug}`;
+      const message = `Halo kak, saya mau pesan ini: ${productUrl}`;
+      const whatsappUrl = `https://wa.me/081351990003?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
   // Load product data from localStorage
   useEffect(() => {
     const fetchProduct = async () => {
@@ -327,7 +336,10 @@ export default function ProductDetail() {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center">
+            <button 
+              onClick={handleContactSeller}
+              className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
+            >
               <ShoppingCart className="h-5 w-5 mr-2" />
               Hubungi Penjual
             </button>

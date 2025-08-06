@@ -40,6 +40,10 @@ export interface Product {
   specifications?: { [key: string]: string };
   is_featured: boolean;
   stock: number;
+  rating?: number;
+  discount?: number;
+  views?: number;
+  sales?: number;
   created_at: string;
   updated_at: string;
 }

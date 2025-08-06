@@ -7,3 +7,6 @@ export { default as SearchBar } from './SearchBar';
 export { default as FilterPanel } from './FilterPanel';
 export { default as EmptyState } from './EmptyState';
 export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as FeaturedProductsSlider } from './FeaturedProductsSlider';
+export { default as DashboardStats } from './DashboardStats';
+export { default as NotificationBell } from './NotificationBell';

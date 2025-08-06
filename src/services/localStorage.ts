@@ -135,6 +135,10 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: DEFAULT_CATEGORIES[0], // Tote Bag
     is_featured: true,
     stock: 45,
+    rating: 4.8,
+    discount: 16,
+    views: 1250,
+    sales: 89,
     images: [{ _id: '1', url: '', alt_text: 'Tote Bag Canvas Premium', is_primary: true }],
     specifications: { 'Material': 'Canvas Premium', 'Ukuran': '40x35x12 cm', 'Berat': '450g', 'Handle': 'Kulit Sintetis' },
     created_at: '2024-01-15T10:00:00Z',
@@ -150,6 +154,9 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: DEFAULT_CATEGORIES[1], // Sling Bag / Crossbody Bag
     is_featured: true,
     stock: 38,
+    rating: 4.6,
+    views: 980,
+    sales: 67,
     images: [{ _id: '2', url: '', alt_text: 'Crossbody Bag Leather Style', is_primary: true }],
     specifications: { 'Material': 'PU Leather', 'Ukuran': '25x18x8 cm', 'Berat': '320g', 'Tali': 'Adjustable' },
     created_at: '2024-01-14T10:00:00Z',
@@ -166,6 +173,8 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: DEFAULT_CATEGORIES[2], // Backpack / Tas Ransel Dewasa
     is_featured: true,
     stock: 32,
+    views: 1450,
+    sales: 95,
     images: [{ _id: '3', url: '', alt_text: 'Backpack Urban Professional', is_primary: true }],
     specifications: { 'Material': 'Nylon Waterproof', 'Ukuran': '45x32x18 cm', 'Berat': '750g', 'Laptop': '15.6 inch' },
     created_at: '2024-01-13T10:00:00Z',
@@ -180,7 +189,9 @@ const DEFAULT_PRODUCTS: Product[] = [
     price: 225000,
     category: DEFAULT_CATEGORIES[3], // Shoulder Bag
     is_featured: false,
-    stock: 28,
+    stock: 3,
+    views: 720,
+    sales: 45,
     images: [{ _id: '4', url: '', alt_text: 'Shoulder Bag Elegant', is_primary: true }],
     specifications: { 'Material': 'Synthetic Leather', 'Ukuran': '30x25x10 cm', 'Berat': '480g', 'Closure': 'Magnetic' },
     created_at: '2024-01-12T10:00:00Z',
@@ -197,6 +208,8 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: DEFAULT_CATEGORIES[4], // Waist Bag / Tas Pinggang
     is_featured: true,
     stock: 55,
+    rating: 4.7,
+    discount: 19,
     images: [{ _id: '5', url: '', alt_text: 'Waist Bag Outdoor Adventure', is_primary: true }],
     specifications: { 'Material': 'Ripstop Nylon', 'Ukuran': '25x15x8 cm', 'Berat': '180g', 'Waterproof': 'Yes' },
     created_at: '2024-01-11T10:00:00Z',
@@ -213,6 +226,8 @@ const DEFAULT_PRODUCTS: Product[] = [
     category: DEFAULT_CATEGORIES[5], // Travel Bag / Duffel Bag
     is_featured: true,
     stock: 22,
+    rating: 4.9,
+    discount: 14,
     images: [{ _id: '6', url: '', alt_text: 'Travel Duffel Bag Large', is_primary: true }],
     specifications: { 'Material': 'Polyester Heavy Duty', 'Ukuran': '65x35x30 cm', 'Berat': '1.2kg', 'Wheels': 'Yes' },
     created_at: '2024-01-10T10:00:00Z',
@@ -304,7 +319,11 @@ const DEFAULT_PRODUCTS: Product[] = [
     original_price: 780000,
     category: DEFAULT_CATEGORIES[0], // Tote Bag
     is_featured: true,
-    stock: 12,
+    stock: 2,
+    rating: 5.0,
+    discount: 17,
+    views: 2100,
+    sales: 125,
     images: [{ _id: '12', url: '', alt_text: 'Premium Tote Bag Leather', is_primary: true }],
     specifications: { 'Material': 'Genuine Leather', 'Ukuran': '42x38x15 cm', 'Weight': '650g', 'Hardware': 'Gold' },
     created_at: '2024-01-04T10:00:00Z',
