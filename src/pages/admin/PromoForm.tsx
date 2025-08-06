@@ -9,7 +9,7 @@ interface PromoFormProps {
   isEditing?: boolean;
 }
 
-const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
+const PromoForm: React.FC<PromoFormProps> = ({ isEditing: propIsEditing = false }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -27,6 +27,9 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
   });
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  // Determine if we're in edit mode based on URL parameter
+  const isEditing = propIsEditing || !!id;
 
   useEffect(() => {
     const fetchData = async () => {
