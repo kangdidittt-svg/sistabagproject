@@ -69,9 +69,9 @@ router.post('/login', catchAsync(async (req: Request, res: Response): Promise<vo
 
 /**
  * Verify Admin Token
- * GET /api/auth/verify
+ * POST /api/auth/verify
  */
-router.get('/verify', authenticateAdmin, catchAsync(async (req: Request, res: Response): Promise<void> => {
+router.post('/verify', authenticateAdmin, catchAsync(async (req: Request, res: Response): Promise<void> => {
   // If middleware passes, token is valid
   res.status(200).json({
     success: true,
