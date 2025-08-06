@@ -146,7 +146,7 @@ export default function CategoryProducts() {
               <img
                 src={category.icon_url}
                 alt={category.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function CategoryProducts() {
                     <img
                       src={product.main_image_url}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
                       {product.is_featured && (
@@ -290,7 +290,7 @@ export default function CategoryProducts() {
                     <img
                       src={product.main_image_url}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                     />
                   </div>
                   <div className="flex-1">

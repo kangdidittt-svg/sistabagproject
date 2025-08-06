@@ -289,7 +289,6 @@ export default function Home() {
                 key={product._id}
                 product={product}
                 layout={viewMode}
-                size={viewMode === 'grid' ? 'medium' : 'large'}
               />
             ))}
           </div>

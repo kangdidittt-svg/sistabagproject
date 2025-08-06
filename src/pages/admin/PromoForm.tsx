@@ -16,18 +16,16 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState<Partial<Promo>>({
-    name: '',
+    title: '',
     description: '',
     discount_percentage: 0,
     start_date: '',
     end_date: '',
-    status: 'inactive',
-    category_id: '',
-    product_id: '',
-    min_purchase: 0,
+    is_active: false,
     max_discount: 0,
-    code: ''
+    applicable_categories: []
   });
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -39,32 +37,25 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
         setCategories(categoriesData);
 
         if (isEditing && id) {
-          // Mock promo data for editing
-          const mockPromo: Promo = {
-            _id: id,
-            name: 'Diskon Akhir Tahun',
-            description: 'Diskon spesial untuk akhir tahun',
-            discount_percentage: 15,
-            start_date: '2024-01-01T00:00:00Z',
-            end_date: '2024-01-31T23:59:59Z',
-            status: 'active',
-            category_id: '1',
-            product_id: '',
-            min_purchase: 100000,
-            max_discount: 50000,
-            code: 'YEAREND15',
-            created_at: '2023-12-15T10:00:00Z',
-            updated_at: '2023-12-15T10:00:00Z'
-          };
-
-          // Format dates for form inputs
-          const formattedPromo = {
-            ...mockPromo,
-            start_date: mockPromo.start_date.split('T')[0],
-            end_date: mockPromo.end_date.split('T')[0]
-          };
-
-          setFormData(formattedPromo);
+          // Load promo data for editing
+          const promos = LocalStorageService.getPromos();
+          const existingPromo = promos.find(p => p._id === id);
+          
+          if (existingPromo) {
+            // Format dates for form inputs
+            const formattedPromo = {
+              ...existingPromo,
+              start_date: existingPromo.start_date.split('T')[0],
+              end_date: existingPromo.end_date.split('T')[0]
+            };
+            
+            setFormData(formattedPromo);
+            
+            // Set selected category if exists
+            if (existingPromo.applicable_categories && existingPromo.applicable_categories.length > 0) {
+              setSelectedCategoryId(existingPromo.applicable_categories[0]._id);
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -80,7 +71,7 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
     const { name, value } = e.target;
     
     // Handle numeric inputs
-    if (['discount_percentage', 'min_purchase', 'max_discount'].includes(name)) {
+    if (['discount_percentage', 'max_discount'].includes(name)) {
       const numValue = value === '' ? 0 : parseFloat(value);
       setFormData(prev => ({
         ...prev,
@@ -103,19 +94,23 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
     }
   };
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     
-    if (!formData.name?.trim()) {
-      newErrors.name = 'Nama promo wajib diisi';
+    if (!formData.title?.trim()) {
+      newErrors.title = 'Judul promo wajib diisi';
     }
     
     if (!formData.description?.trim()) {
       newErrors.description = 'Deskripsi promo wajib diisi';
     }
     
-    if (!formData.discount_percentage || formData.discount_percentage <= 0 || formData.discount_percentage > 100) {
-      newErrors.discount_percentage = 'Persentase diskon harus antara 1-100%';
+    if (!formData.discount_percentage || formData.discount_percentage <= 0) {
+      newErrors.discount_percentage = 'Persentase diskon harus lebih dari 0';
+    }
+    
+    if (formData.discount_percentage && formData.discount_percentage > 100) {
+      newErrors.discount_percentage = 'Persentase diskon tidak boleh lebih dari 100%';
     }
     
     if (!formData.start_date) {
@@ -124,12 +119,14 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
     
     if (!formData.end_date) {
       newErrors.end_date = 'Tanggal berakhir wajib diisi';
-    } else if (formData.start_date && formData.end_date && new Date(formData.start_date) >= new Date(formData.end_date)) {
+    }
+    
+    if (formData.start_date && formData.end_date && formData.start_date >= formData.end_date) {
       newErrors.end_date = 'Tanggal berakhir harus setelah tanggal mulai';
     }
     
-    if (!formData.code?.trim()) {
-      newErrors.code = 'Kode promo wajib diisi';
+    if (!formData.max_discount || formData.max_discount <= 0) {
+      newErrors.max_discount = 'Maksimal diskon harus lebih dari 0';
     }
     
     setErrors(newErrors);
@@ -145,18 +142,27 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
     
     setSaving(true);
     try {
+      // Get selected category
+      const selectedCategory = categories.find(cat => cat._id === selectedCategoryId);
+      
+      const promoData = {
+        ...formData,
+        start_date: new Date(formData.start_date!).toISOString(),
+        end_date: new Date(formData.end_date!).toISOString(),
+        applicable_categories: selectedCategory ? [selectedCategory] : [],
+        created_at: isEditing ? formData.created_at : new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
       if (isEditing && id) {
         // Update existing promo
-        LocalStorageService.updatePromo(id, formData);
-        console.log('Promo updated:', formData);
+        LocalStorageService.updatePromo(id, promoData);
+        alert('Promo berhasil diperbarui!');
       } else {
         // Create new promo
-        const newPromo = LocalStorageService.savePromo(formData);
-        console.log('Promo created:', newPromo);
+        const newPromo = LocalStorageService.savePromo(promoData);
+        alert('Promo berhasil dibuat!');
       }
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Redirect after successful save
       navigate('/admin/promos');
@@ -240,44 +246,20 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
 
             <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
               <div className="sm:col-span-4">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Nama Promo*
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                  Judul Promo*
                 </label>
                 <div className="mt-1">
                   <input
                     type="text"
-                    name="name"
-                    id="name"
-                    value={formData.name || ''}
+                    name="title"
+                    id="title"
+                    value={formData.title || ''}
                     onChange={handleInputChange}
-                    className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md ${errors.name ? 'border-red-300' : ''}`}
+                    className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md ${errors.title ? 'border-red-300' : ''}`}
                   />
-                  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                  {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
                 </div>
-              </div>
-
-              <div className="sm:col-span-4">
-                <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-                  Kode Promo*
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Tag className="h-4 w-4 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    name="code"
-                    id="code"
-                    value={formData.code || ''}
-                    onChange={handleInputChange}
-                    className={`pl-10 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md ${errors.code ? 'border-red-300' : ''}`}
-                    placeholder="SUMMER20"
-                  />
-                  {errors.code && <p className="mt-1 text-sm text-red-600">{errors.code}</p>}
-                </div>
-                <p className="mt-2 text-sm text-gray-500">
-                  Kode yang akan digunakan pelanggan untuk mengklaim promo ini.
-                </p>
               </div>
 
               <div className="sm:col-span-6">
@@ -334,29 +316,9 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
                 </div>
               </div>
 
-              <div className="sm:col-span-2">
-                <label htmlFor="min_purchase" className="block text-sm font-medium text-gray-700">
-                  Minimal Pembelian (Rp)
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="number"
-                    name="min_purchase"
-                    id="min_purchase"
-                    min="0"
-                    value={formData.min_purchase || ''}
-                    onChange={handleInputChange}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  />
-                </div>
-                <p className="mt-2 text-sm text-gray-500">
-                  Kosongkan jika tidak ada minimal pembelian.
-                </p>
-              </div>
-
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-3">
                 <label htmlFor="max_discount" className="block text-sm font-medium text-gray-700">
-                  Maksimal Diskon (Rp)
+                  Maksimal Diskon (Rp)*
                 </label>
                 <div className="mt-1">
                   <input
@@ -366,11 +328,12 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
                     min="0"
                     value={formData.max_discount || ''}
                     onChange={handleInputChange}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md ${errors.max_discount ? 'border-red-300' : ''}`}
                   />
+                  {errors.max_discount && <p className="mt-1 text-sm text-red-600">{errors.max_discount}</p>}
                 </div>
                 <p className="mt-2 text-sm text-gray-500">
-                  Kosongkan jika tidak ada batas maksimal diskon.
+                  Batas maksimal nilai diskon dalam rupiah.
                 </p>
               </div>
             </div>
@@ -446,8 +409,8 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
                   <select
                     id="category_id"
                     name="category_id"
-                    value={formData.category_id || ''}
-                    onChange={handleInputChange}
+                    value={selectedCategoryId}
+                    onChange={(e) => setSelectedCategoryId(e.target.value)}
                     className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
                   >
                     <option value="">Semua Kategori</option>
@@ -460,6 +423,30 @@ const PromoForm: React.FC<PromoFormProps> = ({ isEditing = false }) => {
                 </div>
                 <p className="mt-2 text-sm text-gray-500">
                   Pilih kategori tertentu atau biarkan kosong untuk semua kategori.
+                </p>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium text-gray-700">
+                  Status Promo
+                </label>
+                <div className="mt-1">
+                  <div className="flex items-center">
+                    <input
+                      id="is_active"
+                      name="is_active"
+                      type="checkbox"
+                      checked={formData.is_active || false}
+                      onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.checked }))}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
+                      Aktifkan promo
+                    </label>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-500">
+                  Centang untuk mengaktifkan promo ini.
                 </p>
               </div>
             </div>

@@ -48,7 +48,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ isEditing = false }) => {
             description: 'Smartphone flagship dengan kamera canggih',
             price: 12000000,
             original_price: 15000000,
-            category: mockCategories[0],
+            category: categories[0] || { _id: '1', name: 'Elektronik', slug: 'elektronik', description: '', product_count: 0 },
             is_featured: true,
             stock: 50,
             images: [{ _id: '1', url: '', alt_text: 'Samsung Galaxy S23', is_primary: true }],
@@ -345,7 +345,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ isEditing = false }) => {
               <div className="sm:col-span-3">
                 <div className="flex items-center justify-between">
                   <label htmlFor="is_featured" className="block text-sm font-medium text-gray-700">
-                    Produk Unggulan
+                Unggulan
                   </label>
                   <div className="mt-1">
                     <input
@@ -467,7 +467,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ isEditing = false }) => {
                   {imagePreviewUrls.map((url, index) => (
                     <div key={index} className="relative group">
                       <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100">
-                        <img src={url} alt={`Preview ${index + 1}`} className="object-cover" />
+                        <img src={url} alt={`Preview ${index + 1}`} className="object-contain" />
                       </div>
                       <button
                         type="button"

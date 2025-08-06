@@ -321,7 +321,7 @@ const AdminProducts: React.FC = () => {
                         <div className="flex items-center">
                           <div className="h-12 w-12 flex-shrink-0">
                             <img
-                              className="h-12 w-12 rounded-lg object-cover"
+                              className="h-12 w-12 rounded-lg object-contain"
                               src={`https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(product.name.toLowerCase().replace(/\s+/g, '%20') + '%20product%20photography')}&image_size=square`}
                               alt={product.name}
                             />

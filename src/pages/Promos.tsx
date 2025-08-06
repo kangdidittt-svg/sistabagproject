@@ -1,108 +1,113 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Filter, Clock, Tag, Percent, Calendar } from 'lucide-react';
+import { Promo } from '../services/api';
+import { LocalStorageService } from '../services/localStorage';
+import { LoadingSpinner } from '../components/shared';
 
 export default function Promos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); // all, active, upcoming, expired
+  const [promos, setPromos] = useState<Promo[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - will be replaced with API calls
-  const promos = [
+  // Load promos from localStorage
+  useEffect(() => {
+    const fetchPromos = async () => {
+      setLoading(true);
+      try {
+        const promosData = LocalStorageService.getPromos();
+        setPromos(promosData);
+      } catch (error) {
+        console.error('Error fetching promos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPromos();
+  }, []);
+
+  // Fallback mock data if no promos in localStorage
+  const mockPromos = [
     {
-      id: '1',
-      name: 'Flash Sale Smartphone',
+      _id: '1',
+      title: 'Flash Sale Smartphone',
+      description: 'Diskon besar-besaran untuk smartphone flagship premium',
       discount_percentage: 15,
-      discount_amount: null,
+      max_discount: 1500000,
       start_date: '2024-01-01',
       end_date: '2024-12-31',
       is_active: true,
-      product: {
-        id: '1',
-        name: 'Smartphone Android Flagship Premium',
-        slug: 'smartphone-android-flagship-premium',
-        price: 8500000,
-        original_price: 10000000,
-        main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20smartphone%20android%20black%20sleek%20design%20flagship%20product%20photography&image_size=square',
-        category: 'Elektronik'
-      }
+      applicable_categories: ['elektronik'],
+      image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=premium%20smartphone%20android%20black%20sleek%20design%20flagship%20product%20photography&image_size=square',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
-      id: '2',
-      name: 'Diskon Earbuds Premium',
+      _id: '2',
+      title: 'Diskon Earbuds Premium',
+      description: 'Promo spesial untuk earbuds wireless premium',
       discount_percentage: 20,
-      discount_amount: null,
+      max_discount: 300000,
       start_date: '2024-01-15',
       end_date: '2024-12-31',
       is_active: true,
-      product: {
-        id: '2',
-        name: 'Wireless Earbuds Pro Max',
-        slug: 'wireless-earbuds-pro-max',
-        price: 1200000,
-        original_price: 1500000,
-        main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=wireless%20earbuds%20white%20premium%20design%20pro%20max%20version%20product%20photography&image_size=square',
-        category: 'Elektronik'
-      }
+      applicable_categories: ['elektronik'],
+      image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=wireless%20earbuds%20white%20premium%20design%20pro%20max%20version%20product%20photography&image_size=square',
+      created_at: '2024-01-15T00:00:00Z',
+      updated_at: '2024-01-15T00:00:00Z'
     },
     {
-      id: '3',
-      name: 'Promo Sepatu Olahraga',
+      _id: '3',
+      title: 'Promo Sepatu Olahraga',
+      description: 'Diskon besar untuk sepatu running professional',
       discount_percentage: 25,
-      discount_amount: null,
+      max_discount: 250000,
       start_date: '2024-02-01',
       end_date: '2024-12-31',
       is_active: true,
-      product: {
-        id: '3',
-        name: 'Sepatu Running Professional',
-        slug: 'sepatu-running-professional',
-        price: 750000,
-        original_price: 1000000,
-        main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20running%20shoes%20blue%20white%20athletic%20design%20sport%20product%20photography&image_size=square',
-        category: 'Olahraga'
-      }
+      applicable_categories: ['olahraga'],
+      image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20running%20shoes%20blue%20white%20athletic%20design%20sport%20product%20photography&image_size=square',
+      created_at: '2024-02-01T00:00:00Z',
+      updated_at: '2024-02-01T00:00:00Z'
     },
     {
-      id: '4',
-      name: 'Mega Sale Laptop Gaming',
+      _id: '4',
+      title: 'Mega Sale Laptop Gaming',
+      description: 'Promo laptop gaming dengan performa tinggi',
       discount_percentage: 12,
-      discount_amount: null,
+      max_discount: 3000000,
       start_date: '2024-01-20',
       end_date: '2024-12-31',
       is_active: true,
-      product: {
-        id: '4',
-        name: 'Gaming Laptop RTX 4070',
-        slug: 'gaming-laptop-rtx-4070',
-        price: 22000000,
-        original_price: 25000000,
-        main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=gaming%20laptop%20black%20rgb%20keyboard%20rtx%204070%20high%20performance%20product%20photography&image_size=square',
-        category: 'Elektronik'
-      }
+      applicable_categories: ['elektronik'],
+      image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=gaming%20laptop%20black%20rgb%20keyboard%20rtx%204070%20high%20performance%20product%20photography&image_size=square',
+      created_at: '2024-01-20T00:00:00Z',
+      updated_at: '2024-01-20T00:00:00Z'
     },
     {
-      id: '5',
-      name: 'Diskon Smartwatch Fitness',
+      _id: '5',
+      title: 'Diskon Smartwatch Fitness',
+      description: 'Promo smartwatch untuk monitoring kesehatan',
       discount_percentage: 18,
-      discount_amount: null,
+      max_discount: 360000,
       start_date: '2024-01-10',
       end_date: '2024-12-31',
       is_active: true,
-      product: {
-        id: '5',
-        name: 'Smartwatch Health Monitor Pro',
-        slug: 'smartwatch-health-monitor-pro',
-        price: 1640000,
-        original_price: 2000000,
-        main_image_url: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=smartwatch%20health%20monitor%20black%20sport%20band%20modern%20fitness%20tracking%20product%20photography&image_size=square',
-        category: 'Elektronik'
-      }
+      applicable_categories: ['elektronik'],
+      image: 'https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=smartwatch%20health%20monitor%20black%20sport%20band%20modern%20fitness%20tracking%20product%20photography&image_size=square',
+      created_at: '2024-01-10T00:00:00Z',
+      updated_at: '2024-01-10T00:00:00Z'
     }
   ];
 
-  const filteredPromos = promos.filter(promo => {
-    const matchesSearch = promo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         promo.product.name.toLowerCase().includes(searchTerm.toLowerCase());
+  // Combine localStorage promos with mock data if needed
+  const allPromos = promos.length > 0 ? promos : mockPromos;
+
+  const filteredPromos = allPromos.filter(promo => {
+    const matchesSearch = promo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (promo.description || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     let matchesFilter = true;
     const now = new Date();
@@ -153,9 +158,15 @@ export default function Promos() {
     return { status: 'active', label: 'Aktif', color: 'green' };
   };
 
-  const calculateSavings = (original: number, current: number) => {
-    return original - current;
-  };
+
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -255,11 +266,10 @@ export default function Promos() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPromos.map(promo => {
             const status = getPromoStatus(promo);
-            const savings = calculateSavings(promo.product.original_price, promo.product.price);
             
             return (
               <div
-                key={promo.id}
+                key={promo._id}
                 className="group bg-white rounded-lg shadow-sm border hover:shadow-lg transition-shadow overflow-hidden"
               >
                 {/* Promo Header */}
@@ -273,15 +283,15 @@ export default function Promos() {
                       <div className="text-xs text-red-100">OFF</div>
                     </div>
                   </div>
-                  <h3 className="font-semibold text-sm">{promo.name}</h3>
+                  <h3 className="font-semibold text-sm">{promo.title}</h3>
                 </div>
 
-                {/* Product Info */}
-                <Link to={`/product/${promo.product.slug}`} className="block">
+                {/* Promo Info */}
+                <div className="block">
                   <div className="aspect-square bg-gray-100 relative">
                     <img
-                      src={promo.product.main_image_url}
-                      alt={promo.product.name}
+                      src={promo.image}
+                      alt={promo.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
@@ -291,20 +301,18 @@ export default function Promos() {
                   
                   <div className="p-4">
                     <h4 className="font-medium text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {promo.product.name}
+                      {promo.title}
                     </h4>
                     
                     <div className="space-y-1 mb-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-red-600">
-                          {formatPrice(promo.product.price)}
-                        </span>
-                        <span className="text-sm text-gray-500 line-through">
-                          {formatPrice(promo.product.original_price)}
-                        </span>
+                      <div className="text-sm text-gray-600 mb-2">
+                        {promo.description}
                       </div>
                       <div className="text-sm text-green-600 font-medium">
-                        Hemat {formatPrice(savings)}
+                        Diskon hingga {promo.discount_percentage}%
+                      </div>
+                      <div className="text-sm text-blue-600 font-medium">
+                        Maks. diskon {formatPrice(promo.max_discount)}
                       </div>
                     </div>
                     
@@ -315,11 +323,11 @@ export default function Promos() {
                       </div>
                       <div className="flex items-center">
                         <Tag className="h-3 w-3 mr-1" />
-                        <span>{promo.product.category}</span>
+                        <span>Kategori: {promo.applicable_categories.join(', ')}</span>
                       </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               </div>
             );
           })}

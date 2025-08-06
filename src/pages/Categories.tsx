@@ -76,18 +76,16 @@ export default function Categories() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {categories.map(category => (
           <Link
-            key={category.id}
+            key={category._id}
             to={`/category/${category.slug}`}
             className="group bg-white rounded-xl shadow-sm border hover:shadow-lg transition-all duration-300 overflow-hidden"
           >
             <div className="p-6">
               {/* Icon */}
               <div className="w-16 h-16 bg-gray-100 rounded-lg mb-4 overflow-hidden group-hover:scale-105 transition-transform">
-                <img
-                  src={category.icon_url}
-                  alt={category.name}
-                  className="w-full h-full object-cover"
-                />
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <span className="text-2xl font-bold">{category.name.charAt(0)}</span>
+                </div>
               </div>
               
               {/* Content */}
@@ -125,7 +123,7 @@ export default function Categories() {
             .slice(0, 3)
             .map((category, index) => (
               <Link
-                key={category.id}
+                key={category._id}
                 to={`/category/${category.slug}`}
                 className="group relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-6 text-white overflow-hidden"
               >

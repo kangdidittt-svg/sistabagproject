@@ -53,9 +53,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const imageUrl = mainImage?.url || `https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(product.name.toLowerCase().replace(/\s+/g, '%20') + '%20product%20photography')}&image_size=square`;
 
   const imageSizeClasses = {
-    small: 'aspect-square h-32',
-    medium: 'aspect-square h-48',
-    large: 'aspect-square h-64'
+    small: 'aspect-[3/4] h-32',
+    medium: 'aspect-[3/4] h-48', 
+    large: 'aspect-[3/4] h-64'
   };
 
   if (layout === 'list') {
@@ -65,11 +65,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Image */}
           <div className="flex-shrink-0">
             <Link to={`/product/${product.slug}`}>
-              <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden relative group">
+              <div className="w-24 h-32 bg-gray-100 rounded-lg overflow-hidden relative group aspect-[3/4]">
                 <img
                   src={imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                 />
                 {discount > 0 && (
                   <div className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 py-0.5 rounded">
@@ -94,7 +94,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     {product.name}
                   </h3>
                 </Link>
-                <p className="text-xs text-gray-500 mt-1">{product.category.name}</p>
+                <p className="text-xs text-gray-500 mt-1">{typeof product.category === 'object' ? product.category.name : 'Kategori'}</p>
                 
                 <div className="mt-2">
                   <div className="flex items-center space-x-2">
@@ -119,11 +119,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <div className="flex items-center space-x-2 ml-4">
                 {showWishlist && (
                   <button 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleWishlistToggle();
-                    }}
+                    onClick={handleWishlistToggle}
                     className={`p-2 transition-colors ${
                       isWishlisted 
                         ? 'text-red-500 hover:text-red-600' 
@@ -166,7 +162,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform"
           />
           
           {/* Badges */}
@@ -174,7 +170,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {product.is_featured && (
               <div className="bg-yellow-500 text-white text-xs px-2 py-1 rounded flex items-center">
                 <Star className="h-3 w-3 mr-1" />
-                Featured
+                Unggulan
               </div>
             )}
             {discount > 0 && (
@@ -189,11 +185,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
               {showWishlist && (
                 <button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleWishlistToggle();
-                  }}
+                  onClick={handleWishlistToggle}
                   className={`p-2 bg-white rounded-full transition-colors shadow-md ${
                     isWishlisted 
                       ? 'text-red-500 hover:text-red-600' 
@@ -279,11 +271,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex items-center space-x-2">
             {showWishlist && (
               <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleWishlistToggle();
-                }}
+                onClick={handleWishlistToggle}
                 className={`p-2 transition-colors ${
                   isWishlisted 
                     ? 'text-red-500 hover:text-red-600' 

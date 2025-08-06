@@ -116,7 +116,7 @@ const PromoCard: React.FC<PromoCardProps> = ({
               <img
                 src={imageUrl}
                 alt={promo.title}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-contain rounded-lg"
               />
             </div>
           </div>
@@ -158,7 +158,7 @@ const PromoCard: React.FC<PromoCardProps> = ({
         <img
           src={imageUrl}
           alt={promo.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform"
         />
         
         {/* Status Badge */}

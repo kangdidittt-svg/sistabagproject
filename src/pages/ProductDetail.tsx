@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Heart, Share2, ShoppingCart, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Star, Heart, Share2, ShoppingCart, Check, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import { Product } from '../services/api';
 import { LocalStorageService } from '../services/localStorage';
 import { LoadingSpinner } from '../components/shared';
@@ -12,11 +12,28 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [quantity, setQuantity] = useState(1);
+  const [viewCount, setViewCount] = useState(0);
+
+  // Mock color variants
+  const colorVariants = [
+    { name: 'Hitam', value: '#000000', available: true },
+    { name: 'Putih', value: '#FFFFFF', available: true },
+    { name: 'Biru', value: '#3B82F6', available: true },
+    { name: 'Merah', value: '#EF4444', available: false }
+  ];
 
   // Update wishlist status when product changes
   useEffect(() => {
     if (product) {
       setIsWishlisted(LocalStorageService.isInWishlist(product._id));
+      // Set default color
+      if (colorVariants.length > 0) {
+        setSelectedColor(colorVariants[0].name);
+      }
+      // Simulate view count
+      setViewCount(Math.floor(Math.random() * 1000) + 100);
     }
   }, [product]);
 
@@ -65,7 +82,7 @@ export default function ProductDetail() {
   };
 
   const calculateDiscount = () => {
-    if (product.original_price && product.has_promo) {
+    if (product.original_price && product.original_price > product.price) {
       return Math.round(((product.original_price - product.price) / product.original_price) * 100);
     }
     return 0;
@@ -90,7 +107,7 @@ export default function ProductDetail() {
       return product.images[selectedImageIndex];
     }
     return {
-      image_url: product.main_image_url,
+      url: product.main_image_url || '',
       alt_text: product.name
     };
   };
@@ -140,11 +157,11 @@ export default function ProductDetail() {
         {/* Product Images */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          <div className="relative aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden">
             <img
-              src={getCurrentImage().image_url}
+              src={getCurrentImage().url}
               alt={getCurrentImage().alt_text}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
             
             {/* Navigation Arrows */}
@@ -172,7 +189,7 @@ export default function ProductDetail() {
                   Unggulan
                 </div>
               )}
-              {product.has_promo && (
+              {product.original_price && product.original_price > product.price && (
                 <div className="bg-red-500 text-white text-xs px-2 py-1 rounded">
                   Diskon {calculateDiscount()}%
                 </div>
@@ -185,18 +202,18 @@ export default function ProductDetail() {
             <div className="grid grid-cols-4 gap-2">
               {product.images.map((image, index) => (
                 <button
-                  key={image.id || index}
+                  key={image._id || index}
                   onClick={() => setSelectedImageIndex(index)}
-                  className={`aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-colors ${
+                  className={`aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden border-2 transition-colors ${
                     selectedImageIndex === index
                       ? 'border-blue-600'
                       : 'border-transparent hover:border-gray-300'
                   }`}
                 >
                   <img
-                    src={image.image_url}
+                    src={image.url}
                     alt={image.alt_text}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 </button>
               ))}
@@ -218,7 +235,7 @@ export default function ProductDetail() {
 
           {/* Price */}
           <div className="space-y-2">
-            {product.has_promo && product.original_price ? (
+            {product.original_price && product.original_price > product.price ? (
               <>
                 <div className="flex items-center gap-3">
                   <span className="text-3xl font-bold text-red-600">
@@ -245,23 +262,81 @@ export default function ProductDetail() {
             <p className="text-gray-600 leading-relaxed">{product.description}</p>
           </div>
 
+          {/* Color Variants */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Pilih Warna</h3>
+            <div className="flex flex-wrap gap-3">
+              {colorVariants.map((color) => (
+                <button
+                  key={color.name}
+                  onClick={() => color.available && setSelectedColor(color.name)}
+                  disabled={!color.available}
+                  className={`relative flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                    selectedColor === color.name
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : color.available
+                      ? 'border-gray-300 hover:border-gray-400'
+                      : 'border-gray-200 opacity-50 cursor-not-allowed'
+                  }`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full border ${
+                      color.value === '#FFFFFF' ? 'border-gray-300' : 'border-gray-200'
+                    }`}
+                    style={{ backgroundColor: color.value }}
+                  />
+                  <span className={`text-sm ${
+                    color.available ? 'text-gray-700' : 'text-gray-400'
+                  }`}>
+                    {color.name}
+                  </span>
+                  {!color.available && (
+                    <X className="w-3 h-3 text-gray-400" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Quantity and Stock */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Jumlah</h3>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center border border-gray-300 rounded-lg">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                >
+                  -
+                </button>
+                <span className="px-4 py-2 border-x border-gray-300 min-w-[60px] text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => setQuantity(Math.min(product.stock || 99, quantity + 1))}
+                  className="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                >
+                  +
+                </button>
+              </div>
+              <div className="text-sm text-gray-600">
+                Stok tersedia: <span className="font-medium text-green-600">{product.stock || 50} unit</span>
+              </div>
+            </div>
+          </div>
+
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4">
             <button className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center">
               <ShoppingCart className="h-5 w-5 mr-2" />
               Hubungi Penjual
             </button>
-            <button
-              onClick={handleWishlistToggle}
-              className={`px-6 py-3 rounded-lg font-medium border transition-colors flex items-center justify-center ${
-                isWishlisted
-                  ? 'bg-red-50 border-red-200 text-red-600'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <Heart className={`h-5 w-5 mr-2 ${isWishlisted ? 'fill-current' : ''}`} />
-              {isWishlisted ? 'Tersimpan' : 'Simpan'}
-            </button>
+            <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-lg border">
+              <Eye className="h-5 w-5 text-gray-600" />
+              <span className="text-sm text-gray-600">
+                Dilihat {viewCount.toLocaleString()} kali
+              </span>
+            </div>
             <button className="px-6 py-3 rounded-lg font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
               <Share2 className="h-5 w-5 mr-2" />
               Bagikan
@@ -269,11 +344,11 @@ export default function ProductDetail() {
           </div>
 
           {/* Promo Info */}
-          {product.has_promo && product.promo && (
+          {product.original_price && product.original_price > product.price && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <h4 className="font-semibold text-red-800 mb-1">{product.promo.name}</h4>
+              <h4 className="font-semibold text-red-800 mb-1">Promo Spesial</h4>
               <p className="text-sm text-red-600">
-                Diskon {product.promo.discount_percentage}% berlaku hingga akhir tahun
+                Hemat {formatPrice(product.original_price - product.price)} dari harga normal
               </p>
             </div>
           )}
@@ -299,15 +374,15 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {relatedProducts.map(relatedProduct => (
             <Link
-              key={relatedProduct.id}
+              key={relatedProduct._id}
               to={`/product/${relatedProduct.slug}`}
               className="group bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow overflow-hidden"
             >
-              <div className="aspect-square bg-gray-100">
+              <div className="aspect-[3/4] bg-gray-100">
                 <img
-                  src={relatedProduct.main_image_url}
+                  src={relatedProduct.images?.[0]?.url || `https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(relatedProduct.name.toLowerCase().replace(/\s+/g, '%20') + '%20product%20photography')}&image_size=square`}
                   alt={relatedProduct.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                 />
               </div>
               <div className="p-4">
