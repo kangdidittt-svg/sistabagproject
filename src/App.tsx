@@ -20,6 +20,10 @@ import ProductForm from "./pages/admin/ProductForm";
 import CategoryForm from "./pages/admin/CategoryForm";
 import PromoForm from "./pages/admin/PromoForm";
 import NotFound from "./pages/NotFound";
+import LocalStorageService from "./services/localStorage";
+
+// Reset localStorage to show new bag-focused data
+LocalStorageService.resetToDefaults();
 
 export default function App() {
   return (

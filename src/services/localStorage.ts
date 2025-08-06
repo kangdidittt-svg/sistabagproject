@@ -680,6 +680,16 @@ export class LocalStorageService {
       return false;
     }
   }
+
+  // Reset all data to new defaults
+  static resetToDefaults(): void {
+    localStorage.removeItem(STORAGE_KEYS.CATEGORIES);
+    localStorage.removeItem(STORAGE_KEYS.PRODUCTS);
+    localStorage.removeItem(STORAGE_KEYS.PROMOS);
+    localStorage.removeItem(STORAGE_KEYS.WISHLIST);
+    this.initializeStorage();
+    console.log('LocalStorage has been reset to new bag-focused defaults');
+  }
 }
 
 // Initialize storage on module load
