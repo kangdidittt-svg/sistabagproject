@@ -1,6 +1,7 @@
 export { default as ProductCard } from './ProductCard';
 export { default as CategoryCard } from './CategoryCard';
 export { default as PromoCard } from './PromoCard';
+export { default as PromoSlider } from './PromoSlider';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as Pagination } from './Pagination';
 export { default as SearchBar } from './SearchBar';
